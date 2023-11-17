@@ -33,9 +33,11 @@
 
 # Binary directory
 bin/
+build/
 
 # User preferences for VS code
 .vscode/
 
 # Allow untracked workspace
 workspace/
+
