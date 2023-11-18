@@ -18,9 +18,6 @@ uint32_t set_bg_palette(uint32_t, uint32_t *);
 int main() {
   uint32_t bg_index = 0;
   uint32_t palette_index = 1;
-  set_pixel_bg_controls(63, (bg_index << 29) | (3 << 22) | (287 << 12) |
-                                (511 << 2) | palette_index);
-
   uint32_t palette[256];
   for (int32_t i = 0; i < 256; ++i) {
     palette[i] = 0xffff0000 + i;
@@ -28,10 +25,6 @@ int main() {
   set_bg_palette(palette_index, palette);
 
   uint8_t bg_data[BG_SIZE];
-  for (int32_t i = 0; i < BG_SIZE; ++i) {
-    bg_data[i] = i % 256;
-  }
-  set_pixel_bg_data(bg_index, bg_data);
 
   for (int i = 0;; i = (i + 1) & 63) {
     set_mode(0b111);
