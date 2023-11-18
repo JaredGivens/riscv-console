@@ -1,4 +1,4 @@
-TOOLPREFIX=riscv32-unknown-elf-
+TOOLPREFIX=riscv32-unknown-linux-gnu-
 AR=$(TOOLPREFIX)ar
 AS=$(TOOLPREFIX)as
 CC=$(TOOLPREFIX)gcc

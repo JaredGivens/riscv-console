@@ -1,0 +1,19 @@
+{
+    "Init": {
+        "TimerUS": 1000,
+        "VideoMS": 10,
+        "CPUFreq": 1000000
+    },
+    "Commands": [
+        {
+            "Cycle": 0,
+            "Type": "InsertFW",
+            "Data": "./submission/build/firmware/firmware"
+        },
+        {
+            "Cycle": 0,
+            "Type": "InsertCart",
+            "Data": "./submission/build/cartridge/cartridge"
+        }
+    ]
+}

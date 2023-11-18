@@ -1,76 +1,47 @@
-#include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
-uint32_t GetTicks(void);
-uint32_t GetController(void);
-uint32_t SetTimerCallback(void*, uint32_t);
-uint32_t SetVideoCallback(void*);
+#define BG_W 512
+#define BG_H 288
+#define BG_SIZE 147456
+uint32_t get_ticks();
+uint32_t uint_print(uint32_t);
+uint32_t set_mode(uint32_t);
+uint32_t get_controller();
+uint32_t set_timer_callback(void (*callback)(), uint32_t ms);
+uint32_t set_video_callback(void (*callback)(void *), void *arg);
+uint32_t set_pixel_bg_data(uint32_t index, uint8_t *);
+uint32_t set_pixel_bg_controls(uint32_t index, uint32_t controls);
+uint32_t set_bg_palette(uint32_t, uint32_t *);
 
-volatile int global = 42;
-volatile uint32_t controller_status = 0;
-
-volatile uint8_t *MEDIUM_DATA = (volatile uint8_t *)(0x500D0000);
-volatile uint32_t *MEDIUM_PALETTE = (volatile uint32_t *)(0x500F2000);
-volatile uint32_t *MEDIUM_CONTROL = (volatile uint32_t *)(0x500F5F00);
-
-volatile uint8_t *LARGE_DATA =  (volatile uint8_t *)(0x50090000);
-#define LARGE_PALETTE           ((volatile uint32_t *)(0x500F1000))
-#define LARGE_CONTROL           ((volatile uint32_t *)(0x500F5B00))
-
-volatile uint32_t *MODE_REGISTER = (volatile uint32_t *)(0x500F6780);
-
-uint32_t MediumControl(uint8_t palette, int16_t x, int16_t y, uint8_t z, uint8_t index);
-
-void onVideo(){
-    static uint16_t x_pos = 0;
-    static uint16_t y_pos = 0;
-
-    // x position of square automatically moves right per frame.
-    if(x_pos > 512-64) {
-        x_pos = 0;
-    }
-    x_pos++;
-
-    // y position of square controlled by user.
-    uint32_t controller_status =  (*((volatile uint32_t *)0x40000018));
-
-    *(uint32_t*)0x500F5B00 = MediumControl(0, x_pos, 0, 0, 0);
-}
-
-void onTimer(){
-    static bool a = false;
-    if(a) LARGE_PALETTE[1] = 0xFF00FF00;
-    else LARGE_PALETTE[1] = 0xFF00FFFF;
-    a = !a;
-}
-
-volatile char *VIDEO_MEMORY = (volatile char *)(0x50000000 + 0xF4800);
 int main() {
-    int last_global = 42;
+  uint32_t bg_index = 0;
+  uint32_t palette_index = 1;
+  set_pixel_bg_controls(63, (bg_index << 29) | (3 << 22) | (287 << 12) |
+                                (511 << 2) | palette_index);
 
-    // Fill out sprite data
-    for(int y = 0; y < 64; y++){
-        for(int x = 0; x < 64; x++){
-            *((uint8_t*)0x50090000 + (y*64+x)) = 1;
-        }
+  uint32_t palette[256];
+  for (int32_t i = 0; i < 256; ++i) {
+    palette[i] = 0xffff0000 + i;
+  }
+  set_bg_palette(palette_index, palette);
+
+  uint8_t bg_data[BG_SIZE];
+  for (int32_t i = 0; i < BG_SIZE; ++i) {
+    bg_data[i] = i % 256;
+  }
+  set_pixel_bg_data(bg_index, bg_data);
+
+  for (int i = 0;; i = (i + 1) & 63) {
+    set_mode(0b111);
+    set_pixel_bg_controls(63, (bg_index << 29) | (3 << 22) | (287 << 12) |
+                                  (511 << 2) | palette_index);
+    for (int32_t j = 0; j < BG_SIZE; ++j) {
+      bg_data[j] = (j + i) % 256;
     }
+    set_pixel_bg_data(bg_index, bg_data);
+  }
 
-    LARGE_PALETTE[1] = 0xFFFF0000; // A R G B
-    *(uint32_t*)0x500F5B00 = MediumControl(0, 0, 0, 0, 0);
-    *MODE_REGISTER = 1;
-    SetVideoCallback(onVideo);
-    SetTimerCallback(onTimer, 10000);
-
-    while (1) {
-        uint32_t global = GetTicks();
-        if(global != last_global){
-            last_global = global;
-        }
-    }
-
-    return 0;
-}
-
-uint32_t MediumControl(uint8_t palette, int16_t x, int16_t y, uint8_t z, uint8_t index){
-    return (((uint32_t)index)<<24) | (((uint32_t)z)<<21) | (((uint32_t)y+64)<<12) | (((uint32_t)x+64)<<2) | (palette & 0x3);
+  return 0;
 }

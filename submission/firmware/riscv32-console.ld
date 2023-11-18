@@ -42,8 +42,7 @@ SECTIONS
         _etext = .;             /* end of .text segment */
     } > FLASH
 
-    .rodata :
-    {
+    .rodata : {
         _rodata = .;
         *(.rodata*)             /* constants go here */
         *(.srodata*)            /* constants go here */
@@ -52,36 +51,27 @@ SECTIONS
     } > FLASH
 
     /* data, initialized variables, to be copied to RAM after reset */
-    .data : 
-    {
+    .data : ALIGN(4) {
         _data = .;          /* beginning of .data segment */
         *(.data*)           /* data goes here */
         . = ALIGN(4);
-        _edata = .;         /* end of .data segment */
-    } > RAM AT >FLASH       /* .data segment starts directly after the .text section in FLASH */
-
-    /* sdata, initialized variables, to be copied to RAM after reset */
-    .sdata : 
-    {
+        PROVIDE(__global_pointer$ = . + 0x800);
         _sdata = .;         /* beginning of .sdata segment */
         *(.sdata*)          /* data goes here */
-        . = ALIGN(4);
-        _esdata = .;        /* end of .data segment */
+        _edata = .;        /* end of .data segment */
     } > RAM AT >FLASH       /* .sdata segment starts directly after the .text section in FLASH */
-    _heap_base = MAX(_erodata, MAX(_edata,_esdata));
+    PROVIDE( _data_source = LOADADDR(.data) );
+    _heap_base = MAX(_erodata, _edata);
     _stack = __stack_top - 4096;
     /* uninitialized data which is initialized to 0 upon after reset */
-    .bss :
-    {
+    .bss : ALIGN(4) {
         _bss = .;           /* beginning of .bss segment */
         *(.bss*)            /* .bss content goes here */
         *(.sbss*)           /* .sbss content goes here */
         *(COMMON)       
-        . = ALIGN(. != 0 ? 32 / 8 : 1);
+        . = ALIGN(4);
         _ebss = .;          /* end of .bss segment */
     } > RAM
 
-    __global_pointer$ = MIN(_sdata + 0x800,
-		            MAX(_data + 0x800, _ebss - 0x800));
 
 }
