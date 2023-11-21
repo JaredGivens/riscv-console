@@ -6,7 +6,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-void buf_cpy(void *, void *, uint32_t);
 // Debugging
 // -----------------------------------------------------------------------------
 
@@ -56,21 +55,24 @@ int alloc_objects(Scene *scene) {
   // Objects
   int manual_objects = 7;
   scene->object_count = manual_objects + spider_object_amt;
-  scene->dirty_locals = malloc(scene->object_count * sizeof(bool));
+  scene->dirty_locals = (bool *)malloc(scene->object_count * sizeof(bool));
   if (scene->dirty_locals == NULL) {
     return 1;
   }
+  uint32_t *buf = (uint32_t *)malloc(100);
 
   for (int i = 0; i < scene->object_count; ++i) {
     scene->dirty_locals[i] = true;
   }
 
-  scene->attributes = malloc(scene->object_count * sizeof(GameObjectAttr));
+  scene->attributes =
+      (GameObjectAttr *)malloc(scene->object_count * sizeof(GameObjectAttr));
   if (scene->attributes == NULL) {
     return 1;
   }
 
-  scene->objects = malloc(scene->object_count * sizeof(GameObject));
+  scene->objects =
+      (GameObject *)malloc(scene->object_count * sizeof(GameObject));
   if (scene->objects == NULL) {
     return 1;
   }
