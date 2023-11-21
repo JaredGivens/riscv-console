@@ -134,7 +134,6 @@ void uint_print(uint32_t num) {
 }
 
 void c_interrupt_handler(uint32_t mcause) {
-  uint_print(mcause);
   if (mcause == 0x80000007) // machine timer interrupt
   {
     uint64_t next_mtimecmp = (((uint64_t)MTIMECMP_HIGH) << 32) | MTIMECMP_LOW;
@@ -178,23 +177,13 @@ uint32_t c_system_call(uint32_t arg0, uint32_t arg1, uint32_t arg2,
     return 0;
   case 3: // get controller
     return CONTROLLER;
-  case 4: // set timer callback
-    return 0;
-  case 5: // set video callback
-    // video_callback = (void (*)(void *))arg0;
-    // video_arg = (void *)arg1;
-    return 0;
-  case 6: // set pixel background buffer
-    buf_cpy(BG_BUFS + (BG_BUF_SIZE * arg0), (void *)arg1, BG_BUF_SIZE);
-    // return (uint32_t)(BG_BUFS + (BG_BUF_SIZE * arg0));
-    return 1;
-  case 7: // set pixel background controls
+  case 4: // get pixel background buffer
+    return (uint32_t)(BG_BUFS + (BG_BUF_SIZE * arg0));
+  case 5: // set pixel background controls
     BG_CONTROLS[arg0] = arg1;
     return 0;
-  case 8: // set background palette
-    buf_cpy(BG_PALETTES + (BG_PALETTE_SIZE * arg0), (void *)arg1,
-            BG_PALETTE_SIZE);
-    return 1;
+  case 6: // get background palette
+    return (uint32_t)(BG_PALETTES + (BG_PALETTE_SIZE * arg0));
   }
   return 1;
 }
