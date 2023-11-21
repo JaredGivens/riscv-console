@@ -103,7 +103,7 @@ void init(void) {
   MTIMECMP_HIGH = 0;
 }
 
-void uint_print(uint32_t num) {
+void u32_print(uint32_t num) {
   if (MODE_CONTROL & 0b1) {
     return;
   }
@@ -133,56 +133,61 @@ void uint_print(uint32_t num) {
   buf_cpy(TEXT_DATA, str, i);
 }
 
-void c_interrupt_handler(uint32_t mcause) {
-  if (mcause == 0x80000007) // machine timer interrupt
-  {
-    uint64_t next_mtimecmp = (((uint64_t)MTIMECMP_HIGH) << 32) | MTIMECMP_LOW;
-    next_mtimecmp += 100;
-    MTIMECMP_HIGH = next_mtimecmp >> 32;
-    MTIMECMP_LOW = next_mtimecmp;
-    ticks++;
-    controller_status = CONTROLLER;
+void c_interrupt_handler(uint32_t mcause) {}
 
-    if (timer_callback != NULL && (next_mtimecmp - timer_last) > timer_period) {
-      timer_last = next_mtimecmp;
-      timer_callback();
-    }
+extern char _heap_base[];
+extern char _stack[];
+
+void *_sbrk(uint32_t numbytes) {
+  static char *heap_ptr = NULL;
+  char *base;
+
+  if (heap_ptr == NULL) {
+    heap_ptr = (char *)&_heap_base;
   }
 
-  if (mcause == 0x8000000b) // external(chipset) interrupt
-  {
-    uint32_t pending = INTERRUPT_PENDING;
-    if (pending & 0b10) { // video interrupt
-    }
-    if (pending & 0b100) { // command interrupt
-      if (timer_period < 10000) {
-        timer_period = 10000;
-      } else
-        timer_period = 1000;
-    }
-    INTERRUPT_PENDING = pending; // clear interrupts that have been handled.
+  if ((heap_ptr + numbytes) <= _stack) {
+    base = heap_ptr;
+    heap_ptr += numbytes;
+    return (base);
+  } else {
+    // errno = ENOMEM;
+    return NULL;
   }
 }
+
+typedef enum {
+  SYSCALL_GET_MTIME,
+  SYSCALL_U32_PRINT,
+  SYSCALL_MALLOC,
+  SYSCALL_SET_MODE,
+  SYSCALL_GET_CONTROLLER,
+  SYSCALL_GET_PX_BG_BUF,
+  SYSCALL_SET_BG_CONTROLS,
+  SYSCALL_GET_BG_PALETTE,
+} syscall;
 
 uint32_t c_system_call(uint32_t arg0, uint32_t arg1, uint32_t arg2,
                        uint32_t arg3, uint32_t arg4, uint32_t call) {
   switch (call) {
-  case 0: // get mtime
+  case SYSCALL_GET_MTIME:
     return MTIME_LOW;
-  case 1: // uint print
-    uint_print(arg0);
+  case SYSCALL_U32_PRINT:
+    u32_print(arg0);
     return 0;
-  case 2: // set mode
+  case SYSCALL_MALLOC:
+    return (uint32_t *)_sbrk(arg0);
+  case SYSCALL_SET_MODE:
     MODE_CONTROL = arg0;
     return 0;
-  case 3: // get controller
+  case SYSCALL_GET_CONTROLLER:
     return CONTROLLER;
-  case 4: // get pixel background buffer
+  case SYSCALL_GET_PX_BG_BUF:
     return (uint32_t)(BG_BUFS + (BG_BUF_SIZE * arg0));
-  case 5: // set pixel background controls
+  case SYSCALL_SET_BG_CONTROLS:
     BG_CONTROLS[arg0] = arg1;
     return 0;
-  case 6: // get background palette
+  case SYSCALL_GET_BG_PALETTE: // get background palette
     return (uint32_t)(BG_PALETTES + (BG_PALETTE_SIZE * arg0));
   }
   return 1;
