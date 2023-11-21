@@ -1,10 +1,11 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include <string.h>
 
 #define CARTRIDGE_STATUS (volatile uint32_t *)0x4000001C
+void uint_print(uint32_t);
 int main() {
-  while (1) {
+  for (int i = 0;; ++i) {
+    uint_print(i);
     if (*CARTRIDGE_STATUS & 1) {
       ((void (*)(void))((*CARTRIDGE_STATUS) & 0xFFFFFFFC))();
     }

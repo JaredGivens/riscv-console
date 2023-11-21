@@ -1,6 +1,6 @@
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
-#include <string.h>
 
 #define MTIME_LOW (*((volatile uint32_t *)0x40000008))
 #define MTIME_HIGH (*((volatile uint32_t *)0x4000000C))
@@ -172,17 +172,20 @@ uint32_t c_system_call(uint32_t arg0, uint32_t arg1, uint32_t arg2,
   case 1: // uint print
     uint_print(arg0);
     return 0;
-  case 2: // set mode
+  case 2: // buf cpy
+    buf_cpy(arg0, arg1, arg2);
+    return 0;
+  case 3: // set mode
     MODE_CONTROL = arg0;
     return 0;
-  case 3: // get controller
+  case 4: // get controller
     return CONTROLLER;
-  case 4: // get pixel background buffer
+  case 5: // get pixel background buffer
     return (uint32_t)(BG_BUFS + (BG_BUF_SIZE * arg0));
-  case 5: // set pixel background controls
+  case 6: // set pixel background controls
     BG_CONTROLS[arg0] = arg1;
     return 0;
-  case 6: // get background palette
+  case 7: // get background palette
     return (uint32_t)(BG_PALETTES + (BG_PALETTE_SIZE * arg0));
   }
   return 1;
