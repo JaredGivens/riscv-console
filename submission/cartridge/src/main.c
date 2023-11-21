@@ -9,8 +9,6 @@ uint32_t get_ticks();
 uint32_t uint_print(uint32_t);
 uint32_t set_mode(uint32_t);
 uint32_t get_controller();
-uint32_t set_timer_callback(void (*callback)(), uint32_t ms);
-uint32_t set_video_callback(void (*callback)(void *), void *arg);
 uint32_t set_pixel_bg_data(uint32_t index, uint8_t *);
 uint32_t set_pixel_bg_controls(uint32_t index, uint32_t controls);
 uint32_t set_bg_palette(uint32_t, uint32_t *);

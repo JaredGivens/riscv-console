@@ -24,7 +24,7 @@ volatile uint32_t controller_status;
 
 uint8_t *BG_BUFS = (void *)0x50000000;
 uint32_t BG_BUF_SIZE = 0x24000;
-volatile uint32_t *BG_CONTROLS = (volatile void *)0x500F5100;
+volatile uint32_t *BG_CONTROLS = (volatile void *)0x500F5A00;
 uint8_t *BG_PALETTES = (void *)0x500F0000;
 uint32_t BG_PALETTE_SIZE = 0x400;
 char *TEXT_DATA = (char *)0x500F4800;
