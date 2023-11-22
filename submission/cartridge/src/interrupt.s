@@ -1,16 +1,16 @@
 .section .text, "ax"
 
-.global  get_mtime, u32_print, malloc, buf_cpy, set_mode, get_controller
+.global  get_mtime, printf, malloc, memcpy, set_mode, get_controller
 get_mtime:
     li a5, 0
     ecall
-u32_print:
+printf:
     li a5, 1
     ecall
 malloc:
     li a5, 2
     ecall
-buf_cpy:
+memcpy:
     li a5, 3
     ecall
 set_mode:

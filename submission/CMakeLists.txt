@@ -1,5 +1,5 @@
 project(ecs251)
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.13)
 # Set the C and C++ compilers for cross-compilation
 set(CMAKE_C_COMPILER "riscv32-unknown-elf-gcc")
 set(CMAKE_ASM_COMPILER "riscv32-unknown-elf-gcc")

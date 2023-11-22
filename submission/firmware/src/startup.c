@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -18,12 +19,13 @@
 #define DTA 0x40000000
 
 #define MODE_CONTROL (*((volatile uint32_t *)0x500F6780))
+#define LINE_LEN 64
 
 volatile int ticks;
 volatile uint32_t controller_status;
 
-uint8_t *BG_BUFS = (void *)0x50000000;
-uint32_t BG_BUF_SIZE = 0x24000;
+uint8_t *BG_DATAS = (void *)0x50000000;
+uint32_t BG_DATA_SIZE = 0x24000;
 volatile uint32_t *BG_CONTROLS = (volatile void *)0x500F5A00;
 uint8_t *BG_PALETTES = (void *)0x500F0000;
 uint32_t BG_PALETTE_SIZE = 0x400;
@@ -69,14 +71,14 @@ __attribute__((always_inline)) inline void csr_disable_interrupts(void) {
   asm volatile("csrci mstatus, 0x8");
 }
 
-void *buf_set(void *dest, uint32_t n, uint32_t size) {
+void *memset(void *dest, uint32_t n, uint32_t size) {
   for (int32_t i = size - 1; i > -1; --i) {
     ((uint8_t *)dest)[i] = n;
   }
   return dest;
 }
 
-void *buf_cpy(void *dest, void *src, uint32_t size) {
+void *memcpy(void *dest, void *src, uint32_t size) {
   // DMA1_SRC = (uint32_t)src;
   // DMA1_DEST = (uint32_t)dest;
   // DMA1_SIZE = size;
@@ -91,46 +93,64 @@ void *buf_cpy(void *dest, void *src, uint32_t size) {
 
 void init(void) {
   // set bss to zero
-  buf_set(_bss, 0, _ebss - _bss);
+  memset(_bss, 0, _ebss - _bss);
   // zero controls
   // might not be neccessary
-  buf_set((void *)BG_CONTROLS, 0, 64);
+  memcpy((void *)BG_CONTROLS, 0, 64);
   // copy data rom to data ram
-  buf_cpy(_data, _data_source, _edata - _data);
+  memcpy(_data, _data_source, _edata - _data);
 
   INTERRUPT_ENABLE = 0b10;
   MTIMECMP_LOW = 1;
   MTIMECMP_HIGH = 0;
 }
 
-void u32_print(uint32_t num) {
+void printf(const char *fmt, ...) {
   if (MODE_CONTROL & 0b1) {
     return;
   }
-  char str[64];
-  int i = 0;
-  int isNegative = 0;
+  va_list args;
+  va_start(args, fmt);
+  char line[LINE_LEN] = {0};
+  int line_i = 0;
+  for (int i = 0; fmt[i] != '\0'; ++i) {
+    if (fmt[i] != '%') {
+      line[line_i++] = fmt[i];
+      continue;
+    }
+    ++i;
+    if (fmt[i] == '\0') {
+      break;
+    }
 
-  // Extract digits in reverse order
-  do {
-    str[i++] = num % 10 + '0';
-    num /= 10;
-  } while (num != 0);
+    switch (fmt[i]) {
+    case 'd': {
+      int num = va_arg(args, int);
+      // Extract digits in reverse order
+      do {
+        line[line_i++] = num % 10 + '0';
+        num /= 10;
+      } while (num != 0);
 
-  str[i] = '\0'; // Null-terminate the string
-
-  // Reverse the string
-  int start = 0;
-  int end = i - 1;
-  while (start < end) {
-    char temp = str[start];
-    str[start] = str[end];
-    str[end] = temp;
-    start++;
-    end--;
+      // Reverse the string
+      int start = i;
+      int end = line_i - 1;
+      while (start < end) {
+        char temp = line[start];
+        line[start] = line[end];
+        line[end] = temp;
+        start++;
+        end--;
+      }
+    }
+    case 'f':
+      break;
+    }
   }
-  buf_cpy(TEXT_DATA + 64, TEXT_DATA, 64 * 31);
-  buf_cpy(TEXT_DATA, str, i);
+
+  memcpy(TEXT_DATA + LINE_LEN, TEXT_DATA, LINE_LEN * 31);
+  memcpy(TEXT_DATA, line, LINE_LEN);
+  va_end(args);
 }
 
 void c_interrupt_handler(uint32_t mcause) {}
@@ -158,13 +178,13 @@ void *_sbrk(uint32_t numbytes) {
 
 typedef enum {
   SYSCALL_GET_MTIME,
-  SYSCALL_U32_PRINT,
+  SYSCALL_PRINTF,
   SYSCALL_MALLOC,
-  SYSCALL_BUF_CPY,
+  SYSCALL_MEMCPY,
   SYSCALL_SET_MODE,
   SYSCALL_GET_CONTROLLER,
-  SYSCALL_GET_PX_BG_BUF,
-  SYSCALL_SET_BG_CONTROLS,
+  SYSCALL_GET_PIXEL_BG_DATA,
+  SYSCALL_SET_PIXEL_BG_CONTROLS,
   SYSCALL_GET_BG_PALETTE,
 } syscall;
 
@@ -173,24 +193,24 @@ uint32_t c_system_call(uint32_t arg0, uint32_t arg1, uint32_t arg2,
   switch (call) {
   case SYSCALL_GET_MTIME:
     return MTIME_LOW;
-  case SYSCALL_U32_PRINT:
-    u32_print(arg0);
+  case SYSCALL_PRINTF:
+    printf((const char *)arg0, arg1, arg2, arg3, arg4);
     return 0;
   case SYSCALL_MALLOC:
     return (uint32_t)_sbrk(arg0);
-  case SYSCALL_BUF_CPY:
-    return (uint32_t) buf_cpy((char *)arg0, (char *)arg1, arg2);
+  case SYSCALL_MEMCPY:
+    return (uint32_t)memcpy((char *)arg0, (char *)arg1, arg2);
   case SYSCALL_SET_MODE:
     MODE_CONTROL = arg0;
     return 0;
   case SYSCALL_GET_CONTROLLER:
     return CONTROLLER;
-  case SYSCALL_GET_PX_BG_BUF:
-    return (uint32_t)(BG_BUFS + (BG_BUF_SIZE * arg0));
-  case SYSCALL_SET_BG_CONTROLS:
+  case SYSCALL_GET_PIXEL_BG_DATA:
+    return (uint32_t)(BG_DATAS + (BG_DATA_SIZE * arg0));
+  case SYSCALL_SET_PIXEL_BG_CONTROLS:
     BG_CONTROLS[arg0] = arg1;
     return 0;
-  case SYSCALL_GET_BG_PALETTE: // get background palette
+  case SYSCALL_GET_BG_PALETTE:
     return (uint32_t)(BG_PALETTES + (BG_PALETTE_SIZE * arg0));
   }
   return 1;

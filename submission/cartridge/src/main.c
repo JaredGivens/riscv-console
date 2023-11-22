@@ -57,6 +57,7 @@ int alloc_objects(Scene *scene) {
   scene->object_count = manual_objects + spider_object_amt;
   scene->dirty_locals = (bool *)malloc(scene->object_count * sizeof(bool));
   if (scene->dirty_locals == NULL) {
+    printf("alloc_objects dirty locals malloc failed");
     return 1;
   }
 
@@ -67,12 +68,14 @@ int alloc_objects(Scene *scene) {
   scene->attributes =
       (GameObjectAttr *)malloc(scene->object_count * sizeof(GameObjectAttr));
   if (scene->attributes == NULL) {
+    printf("alloc_objects attributes malloc failed");
     return 1;
   }
 
   scene->objects =
       (GameObject *)malloc(scene->object_count * sizeof(GameObject));
   if (scene->objects == NULL) {
+    printf("alloc_objects game objects malloc failed");
     return 1;
   }
 
@@ -91,10 +94,10 @@ int alloc_objects(Scene *scene) {
   // scene->attributes[6].light.color = (Vec3){{0.4f, 0.4f, 0.4f}};
   // scene->attributes[6].light.intensity = light_intensity;
 
-  buf_cpy(scene->objects + manual_objects, spider_game_objects,
-          spider_object_amt * sizeof(GameObject));
-  buf_cpy(scene->attributes + manual_objects, spider_attrs,
-          spider_object_amt * sizeof(GameObjectAttr));
+  memcpy(scene->objects + manual_objects, spider_game_objects,
+         spider_object_amt * sizeof(GameObject));
+  memcpy(scene->attributes + manual_objects, spider_attrs,
+         spider_object_amt * sizeof(GameObjectAttr));
   scene->max_depth = MAX(scene->max_depth, spider_max_depth);
 
   // scene->objects[manual_objects].scale = (Vec3){{0.1f, 0.1f, 0.1f}};
