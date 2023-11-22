@@ -179,7 +179,7 @@ uint32_t c_system_call(uint32_t arg0, uint32_t arg1, uint32_t arg2,
   case SYSCALL_MALLOC:
     return (uint32_t)_sbrk(arg0);
   case SYSCALL_BUF_CPY:
-    return (uint32_t)buf_cpy((void *)arg0, (void *)arg1, arg2);
+    return (uint32_t) buf_cpy((char *)arg0, (char *)arg1, arg2);
   case SYSCALL_SET_MODE:
     MODE_CONTROL = arg0;
     return 0;

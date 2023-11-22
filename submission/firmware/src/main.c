@@ -1,5 +1,4 @@
 #include <stdint.h>
-#include <stdlib.h>
 
 #define CARTRIDGE_STATUS (volatile uint32_t *)0x4000001C
 void u32_print(uint32_t);

@@ -59,7 +59,6 @@ int alloc_objects(Scene *scene) {
   if (scene->dirty_locals == NULL) {
     return 1;
   }
-  uint32_t *buf = (uint32_t *)malloc(100);
 
   for (int i = 0; i < scene->object_count; ++i) {
     scene->dirty_locals[i] = true;
@@ -76,27 +75,6 @@ int alloc_objects(Scene *scene) {
   if (scene->objects == NULL) {
     return 1;
   }
-
-  // scene->objects[0] = game_object_default();
-  // scene->objects[0].position = (Vec3){{0.0f, 1.0f, -3.0f}};
-  // scene->objects[0].scale = (Vec3){{10.0f, 10.0f, 10.0f}};
-  // scene->attributes[0].type = ATTR_MESH;
-  // scene->attributes[0].mesh = load_obj_mesh("../models/head.obj");
-  // scene->attributes[0].mesh.color = white;
-
-  // scene->objects[1] = game_object_default();
-  // scene->objects[1].quaternion = quat_from_units(UNIT_X, UNIT_Z);
-  // scene->objects[1].position = (Vec3){{0.0f, 6.0f, -10.0f}};
-  // scene->attributes[1].type = ATTR_MESH;
-  // scene->attributes[1].mesh = load_obj_mesh("../models/light_box.obj");
-  // scene->attributes[1].mesh.color = blue;
-
-  // scene->objects[2] = game_object_default();
-  // scene->objects[2].position = (Vec3){{-5.0f, -3.0f, -10.0f}};
-  // scene->objects[2].scale = (Vec3){{6.0f, 6.0f, 6.0f}};
-  // scene->attributes[2].type = ATTR_MESH;
-  // scene->attributes[2].mesh = load_obj_mesh("../models/head.obj");
-  // scene->attributes[2].mesh.color = white;
 
   float light_intensity = 50.0f;
   for (int i = POINT_LIGHTS_BEGIN; i < POINT_LIGHTS_END; ++i) {
@@ -181,6 +159,9 @@ int main(int argc, char *argv[]) {
   // Update loop
 
   mango = mango_alloc(&scene, "", 0, 0);
+  if (mango == NULL) {
+    return 1;
+  }
   mango->user_update = &update;
   mango_run(mango);
 
