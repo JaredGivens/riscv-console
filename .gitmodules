@@ -1,3 +1,3 @@
-[submodule "PureC-Software-Renderer"]
-	path = submission/cartridge/PureC-Software-Renderer
+[submodule "submission/PureC-Software-Renderer"]
+	path = submission/PureC-Software-Renderer
 	url = git@github.com:dominicaq/PureC-Software-Renderer.git
