@@ -126,6 +126,7 @@ void printf(const char *fmt, ...) {
     switch (fmt[i]) {
     case 'd': {
       int num = va_arg(args, int);
+      int start = line_i;
       // Extract digits in reverse order
       do {
         line[line_i++] = num % 10 + '0';
@@ -133,7 +134,6 @@ void printf(const char *fmt, ...) {
       } while (num != 0);
 
       // Reverse the string
-      int start = i;
       int end = line_i - 1;
       while (start < end) {
         char temp = line[start];
@@ -155,7 +155,6 @@ void printf(const char *fmt, ...) {
 
 void c_interrupt_handler(uint32_t mcause) {}
 
-extern char _heap_base[];
 extern char _stack[];
 
 void *_sbrk(uint32_t numbytes) {
@@ -163,9 +162,12 @@ void *_sbrk(uint32_t numbytes) {
   char *base;
 
   if (heap_ptr == NULL) {
-    heap_ptr = (char *)&_heap_base;
+    heap_ptr = (char *)&_edata;
+    printf("base %d, stack %d", _edata, _stack);
   }
 
+  printf("ptr: %d", heap_ptr);
+  printf("mem: %d, %d", numbytes, heap_ptr + numbytes);
   if ((heap_ptr + numbytes) <= _stack) {
     base = heap_ptr;
     heap_ptr += numbytes;

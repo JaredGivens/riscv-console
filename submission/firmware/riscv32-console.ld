@@ -11,9 +11,9 @@ OUTPUT_ARCH(riscv)
 MEMORY
 {
     /* riscv-console virt machine FLASH */
-    FLASH (rx)  : ORIGIN = 0x00000000, LENGTH = 16M
+    FLASH (rx)  : ORIGIN = 0x00000000, LENGTH = 2M
     /* riscv-console virt machine RAM */
-    RAM (rwx)   : ORIGIN = 0x70000000, LENGTH = 8M
+    RAM (rwx)   : ORIGIN = 0x70000000, LENGTH = 2M
     
 }
 ENTRY(_start)
@@ -61,8 +61,7 @@ SECTIONS
         _edata = .;        /* end of .data segment */
     } > RAM AT >FLASH       /* .sdata segment starts directly after the .text section in FLASH */
     PROVIDE( _data_source = LOADADDR(.data) );
-    _heap_base = MAX(_erodata, _edata);
-    _stack = __stack_top - 4096;
+    _stack = __stack_top - 0x1000;
     /* uninitialized data which is initialized to 0 upon after reset */
     .bss : ALIGN(4) {
         _bss = .;           /* beginning of .bss segment */
