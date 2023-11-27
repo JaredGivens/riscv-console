@@ -5,7 +5,7 @@
 #include <Mango/render/framedata.h>
 
 // Pre parsed game data
-#include "spider.h"
+#include "cube.h"
 
 // Window data
 const char *GAME_TITLE = "Mango Renderer";
@@ -28,11 +28,15 @@ int POINT_LIGHTS_END = 6;
 // Scene data
 Scene scene;
 Vec4 slight_right;
+Vec4 slight_left;
+
+Vec4 slight_up;
+Vec4 slight_down;
 
 Camera init_camera(int frame_width, int frame_height) {
   Camera cam;
   cam.game_object = game_object_default();
-  cam.game_object.position = (Vec3){{0.0f, 1.0f, 30.0f}};
+  cam.game_object.position = (Vec3){{0.0f, 1.0f, 40.0f}};
   cam.dirty_local = true;
   cam.fov = 50.0f;
   cam.aspect = (float)(frame_width) / frame_height;
@@ -49,7 +53,7 @@ int alloc_objects(Scene *scene) {
 
   // Objects
   int manual_objects = 7;
-  scene->object_count = manual_objects + spider_object_amt;
+  scene->object_count = manual_objects + cube_object_amt;
   scene->dirty_locals = (bool *)malloc(scene->object_count * sizeof(bool));
   if (scene->dirty_locals == NULL) {
     printf("ERROR: malloc failed dirty_locals\n");
@@ -129,11 +133,11 @@ int alloc_objects(Scene *scene) {
   // scene->attributes[6].light.color = (Vec3){{0.4f, 0.4f, 0.4f}};
   // scene->attributes[6].light.intensity = light_intensity;
 
-  memcpy(scene->objects + manual_objects, spider_game_objects,
-         spider_object_amt * sizeof(GameObject));
-  memcpy(scene->attributes + manual_objects, spider_attrs,
-         spider_object_amt * sizeof(GameObjectAttr));
-  scene->max_depth = MAX(scene->max_depth, spider_max_depth);
+  memcpy(scene->objects + manual_objects, cube_game_objects,
+         cube_object_amt * sizeof(GameObject));
+  memcpy(scene->attributes + manual_objects, cube_attrs,
+         cube_object_amt * sizeof(GameObjectAttr));
+  scene->max_depth = MAX(scene->max_depth, cube_max_depth);
 
   scene->objects[manual_objects].scale = (Vec3){{0.1f, 0.1f, 0.1f}};
 
@@ -148,7 +152,7 @@ void update(Real dt) {
   static float frames = 0;
   attack_cd += dt;
   if (attack_cd > 3000) {
-    mango_play_anim(mango, 7, &spider_Attack_anim);
+    // mango_play_anim(mango, 7, &cube_Attack_anim);
     attack_cd = 0;
   }
 
@@ -156,10 +160,35 @@ void update(Real dt) {
   // quat_mul(&scene.camera.game_object.quaternion, &slight_right);
   // scene.camera.game_object.needs_update = true;
   // End
+  uint32_t controls = get_controller();
+  // set_mode(0);
+  // printf("cont %d", controls);
+  if (controls & INPUT_DIRECTION_RIGHT) {
+    quat_mul(&scene.objects[8].quaternion, &slight_right);
+    scene.dirty_locals[8] = true;
+  }
 
-  // quat_mul(&scene.objects[7].quaternion, &slight_right);
-  // scene.dirty_locals[7] = true;
+  if (controls & INPUT_DIRECTION_LEFT) {
+    quat_mul(&scene.objects[8].quaternion, &slight_left);
+    scene.dirty_locals[8] = true;
+  }
 
+  if (controls & INPUT_DIRECTION_UP) {
+    quat_mul(&scene.objects[8].quaternion, &slight_up);
+    scene.dirty_locals[8] = true;
+  }
+
+  if (controls & INPUT_DIRECTION_DOWN) {
+    quat_mul(&scene.objects[8].quaternion, &slight_down);
+    scene.dirty_locals[8] = true;
+  }
+
+  if (controls & INPUT_BUTTON_1) {
+    mango->ubo.options = OPT_USE_RASTERIZE | OPT_VIEW_NORMALS;
+  }
+  if (controls & INPUT_BUTTON_2) {
+    mango->ubo.options = OPT_USE_WIREFRAME;
+  }
   // quat_mul(&scene.camera->game_object.quaternion, &slight_right);
   // scene.camera->dirty_local = true;
 
@@ -185,7 +214,12 @@ int main(int argc, char *argv[]) {
   printf("Initializing mango renderer...\n");
 
   // Scene data
-  slight_right = quat_from_axis(UNIT_Y, 0.01f);
+  slight_right = quat_from_axis(UNIT_Z, 0.05f);
+  slight_left = quat_from_axis(UNIT_Z, -0.05f);
+
+  slight_up = quat_from_axis(UNIT_X, -0.05f);
+  slight_down = quat_from_axis(UNIT_X, 0.05f);
+
   if (alloc_objects(&scene) != 0) {
     return 1;
   }
@@ -194,7 +228,7 @@ int main(int argc, char *argv[]) {
   scene.camera = &camera;
 
   // Debug options
-  scene.options = OPT_USE_RASTERIZE;
+  scene.options = OPT_USE_WIREFRAME;
 
   printf("Success.\n");
 
