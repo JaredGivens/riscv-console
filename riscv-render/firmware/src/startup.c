@@ -156,7 +156,7 @@ void printf(const char *fmt, ...) {
 void c_interrupt_handler(uint32_t mcause) {}
 
 typedef enum {
-  SYSCALL_GET_CLOCK,
+  SYSCALL_GET_MTIME,
   SYSCALL_PRINTF,
   SYSCALL_MEMCPY,
   SYSCALL_SET_MODE,
@@ -169,7 +169,7 @@ typedef enum {
 uint32_t c_system_call(uint32_t arg0, uint32_t arg1, uint32_t arg2,
                        uint32_t arg3, uint32_t arg4, uint32_t call) {
   switch (call) {
-  case SYSCALL_GET_CLOCK:
+  case SYSCALL_GET_MTIME:
     return MTIME_LOW;
   case SYSCALL_PRINTF:
     printf((const char *)arg0, arg1, arg2, arg3, arg4);

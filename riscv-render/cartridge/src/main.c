@@ -13,13 +13,13 @@ const char *GAME_TITLE = "Mango Renderer";
 
 // Lights
 const Vec3 COLLOR_PALLETE[7] = {
-    {{1.0f, 0.0f, 0.0f}}, // Red
-    {{0.0f, 1.0f, 0.0f}}, // Green
-    {{0.0f, 0.0f, 1.0f}}, // Blue
-    {{1.0f, 1.0f, 0.0f}}, // Yellow
-    {{1.0f, 1.0f, 1.0f}}, // White
-    {{0.3f, 0.0f, 0.5f}}, // Indigo
-    {{0.5f, 0.0f, 0.5f}}  // Violet
+    {{255.0f, 0.0f, 0.0f}}, // Red
+    {{0.0f, 255.0f, 0.0f}}, // Green
+    {{0.0f, 0.0f, 1.0f}},   // Blue
+    {{1.0f, 1.0f, 0.0f}},   // Yellow
+    {{1.0f, 1.0f, 1.0f}},   // White
+    {{0.3f, 0.0f, 0.5f}},   // Indigo
+    {{0.5f, 0.0f, 0.5f}}    // Violet
 };
 
 int POINT_LIGHTS_BEGIN = 3;
@@ -36,7 +36,7 @@ Vec4 slight_down;
 Camera init_camera(int frame_width, int frame_height) {
   Camera cam;
   cam.game_object = game_object_default();
-  cam.game_object.position = (Vec3){{0.0f, 1.0f, 40.0f}};
+  cam.game_object.position = (Vec3){{0.0f, 1.0f, 60.0f}};
   cam.dirty_local = true;
   cam.fov = 50.0f;
   cam.aspect = (float)(frame_width) / frame_height;
@@ -52,8 +52,8 @@ int alloc_objects(Scene *scene) {
   // Vec3 blue = (Vec3){{0.0f, 0.5f, 1.0f}};
 
   // Objects
-  int manual_objects = 7;
-  scene->object_count = manual_objects + cube_object_amt;
+  int32_t cube_amt = 2;
+  scene->object_count = cube_amt * cube_object_amt;
   scene->dirty_locals = (bool *)malloc(scene->object_count * sizeof(bool));
   if (scene->dirty_locals == NULL) {
     printf("ERROR: malloc failed dirty_locals\n");
@@ -78,68 +78,17 @@ int alloc_objects(Scene *scene) {
     return 1;
   }
 
-  // scene->objects[0] = game_object_default();
-  // scene->objects[0].position = (Vec3){{0.0f, -3.0f, -12.0f}};
-  // scene->objects[0].scale = (Vec3){{14.0f, 14.0f, 14.0f}};
-  // scene->attributes[0].type = ATTR_MESH;
-  // scene->attributes[0].mesh = load_obj_mesh("../models/head.obj");
-  // scene->attributes[0].mesh.color = white;
-  // Material *mat0 = malloc(sizeof(Material));
-  // if (mat0 == NULL) {
-  // printf("ERROR: malloc failed mat0\n");
-  // }
-  // Texture head_diffuse;
-  // head_diffuse.data = head_diffuse_jpg;
-  // head_diffuse.width = head_diffuse_jpg_width;
-  // head_diffuse.height = head_diffuse_jpg_height;
-  // head_diffuse.data_size = head_diffuse_jpg_len;
-  // head_diffuse.bpp = 3;
-  // Texture head_normal;
-  // head_normal.data = tex_head_nm;
-  // head_normal.width = tex_head_nm_jpg_width;
-  // head_normal.height = tex_head_nm_jpg_height;
-  // head_normal.data_size = tex_head_nm_width_jpg_len;
-  // head_normal.bpp = 3;
-  // mat0->albedo_map = &head_diffuse;
-  // mat0->normal_map = &head_normal;
-  // scene->attributes[0].mesh.material = mat0;
+  for (int32_t i = 0; i < cube_amt; ++i) {
+    int cube_i = i * cube_object_amt;
+    memcpy(scene->objects + cube_i, cube_game_objects,
+           cube_object_amt * sizeof(GameObject));
+    memcpy(scene->attributes + cube_i, cube_attrs,
+           cube_object_amt * sizeof(GameObjectAttr));
+    scene->max_depth = MAX(scene->max_depth, cube_max_depth);
 
-  // scene->objects[1] = game_object_default();
-  // scene->objects[1].quaternion = quat_from_units(UNIT_X, UNIT_Z);
-  // scene->objects[1].position = (Vec3){{0.0f, 6.0f, -10.0f}};
-  // scene->attributes[1].type = ATTR_MESH;
-  // scene->attributes[1].mesh = load_obj_mesh("../models/light_box.obj");
-  // scene->attributes[1].mesh.color = blue;
-
-  // scene->objects[2] = game_object_default();
-  // scene->objects[2].position = (Vec3){{-5.0f, -3.0f, -10.0f}};
-  // scene->objects[2].scale = (Vec3){{6.0f, 6.0f, 6.0f}};
-  // scene->attributes[2].type = ATTR_MESH;
-  // scene->attributes[2].mesh = load_obj_mesh("../models/head.obj");
-  // scene->attributes[2].mesh.color = white;
-
-  float light_intensity = 50.0f;
-  for (int i = POINT_LIGHTS_BEGIN; i < POINT_LIGHTS_END; ++i) {
-    scene->objects[i] = game_object_default();
-    scene->attributes[i].type = ATTR_LIGHT;
-    scene->attributes[i].light.type = LIGHT_POINT;
-    scene->attributes[i].light.color = COLLOR_PALLETE[i];
-    scene->attributes[i].light.intensity = light_intensity;
+    scene->objects[cube_i].scale = (Vec3){{0.1f, 0.1f, 0.1f}};
+    scene->attributes[cube_i + 1].mesh.color = COLLOR_PALLETE[i];
   }
-
-  // scene->objects[6] = game_object_default();
-  // scene->attributes[6].type = ATTR_LIGHT;
-  // scene->attributes[6].light.type = LIGHT_AMBIENT;
-  // scene->attributes[6].light.color = (Vec3){{0.4f, 0.4f, 0.4f}};
-  // scene->attributes[6].light.intensity = light_intensity;
-
-  memcpy(scene->objects + manual_objects, cube_game_objects,
-         cube_object_amt * sizeof(GameObject));
-  memcpy(scene->attributes + manual_objects, cube_attrs,
-         cube_object_amt * sizeof(GameObjectAttr));
-  scene->max_depth = MAX(scene->max_depth, cube_max_depth);
-
-  scene->objects[manual_objects].scale = (Vec3){{0.1f, 0.1f, 0.1f}};
 
   return 0;
 }
@@ -147,6 +96,8 @@ int alloc_objects(Scene *scene) {
 Mango *mango;
 Vec4 slight_right;
 Real attack_cd = 0;
+int cube0 = 1;
+int cube1 = 3;
 
 void update(Real dt) {
   static float frames = 0;
@@ -160,27 +111,41 @@ void update(Real dt) {
   // quat_mul(&scene.camera.game_object.quaternion, &slight_right);
   // scene.camera.game_object.needs_update = true;
   // End
+  if (vec4_magnitude(vec4_sub(scene.objects[cube0].quaternion,
+                              scene.objects[cube1].quaternion)) < 0.1) {
+    Real x = clock();
+    int y = srand(real_to_i32(x));
+    int z = srand(y);
+    int w = srand(z);
+
+    Vec4 new_quat = {{x, real_from_i32(y), real_from_i32(z), real_from_i32(w)}};
+    // Vec4 new_quat = {{2, 3, 324, 2}};
+    scene.objects[cube1].quaternion = quat_normalize(new_quat);
+    scene.dirty_locals[cube1] = true;
+  }
   uint32_t controls = get_controller();
-  // set_mode(0);
-  // printf("cont %d", controls);
   if (controls & INPUT_DIRECTION_RIGHT) {
-    quat_mul(&scene.objects[8].quaternion, &slight_right);
-    scene.dirty_locals[8] = true;
+    scene.objects[cube0].quaternion =
+        quat_mul(slight_right, scene.objects[cube0].quaternion);
+    scene.dirty_locals[cube0] = true;
   }
 
   if (controls & INPUT_DIRECTION_LEFT) {
-    quat_mul(&scene.objects[8].quaternion, &slight_left);
-    scene.dirty_locals[8] = true;
+    scene.objects[cube0].quaternion =
+        quat_mul(slight_left, scene.objects[cube0].quaternion);
+    scene.dirty_locals[cube0] = true;
   }
 
   if (controls & INPUT_DIRECTION_UP) {
-    quat_mul(&scene.objects[8].quaternion, &slight_up);
-    scene.dirty_locals[8] = true;
+    scene.objects[cube0].quaternion =
+        quat_mul(slight_up, scene.objects[cube0].quaternion);
+    scene.dirty_locals[cube0] = true;
   }
 
   if (controls & INPUT_DIRECTION_DOWN) {
-    quat_mul(&scene.objects[8].quaternion, &slight_down);
-    scene.dirty_locals[8] = true;
+    scene.objects[cube0].quaternion =
+        quat_mul(slight_down, scene.objects[cube0].quaternion);
+    scene.dirty_locals[cube0] = true;
   }
 
   if (controls & INPUT_BUTTON_1) {
@@ -189,23 +154,7 @@ void update(Real dt) {
   if (controls & INPUT_BUTTON_2) {
     mango->ubo.options = OPT_USE_WIREFRAME;
   }
-  // quat_mul(&scene.camera->game_object.quaternion, &slight_right);
-  // scene.camera->dirty_local = true;
 
-  float circle_radius = 10.0f;
-  int num_lights = POINT_LIGHTS_END - POINT_LIGHTS_BEGIN;
-  float angle_increment = 2.0f * M_PI / num_lights;
-  for (int i = POINT_LIGHTS_BEGIN; i < POINT_LIGHTS_END; ++i) {
-    float angle = angle_increment * (i + (frames / 20.0f));
-    float x = circle_radius * cosf(angle);
-    float z = circle_radius * sinf(angle);
-    scene.dirty_locals[i] = true;
-    scene.objects[i].position = (Vec3){{x, 0.0f, z}};
-  }
-
-  // Rotate model
-  quat_mul(&scene.objects[0].quaternion, &slight_right);
-  scene.dirty_locals[0] = true;
   ++frames;
 }
 
@@ -214,8 +163,8 @@ int main(int argc, char *argv[]) {
   printf("Initializing mango renderer...\n");
 
   // Scene data
-  slight_right = quat_from_axis(UNIT_Z, 0.05f);
-  slight_left = quat_from_axis(UNIT_Z, -0.05f);
+  slight_right = quat_from_axis(UNIT_Y, 0.05f);
+  slight_left = quat_from_axis(UNIT_Y, -0.05f);
 
   slight_up = quat_from_axis(UNIT_X, -0.05f);
   slight_down = quat_from_axis(UNIT_X, 0.05f);
