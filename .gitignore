@@ -43,3 +43,5 @@ build/
 workspace/
 
 compile_commands.json
+debug/
+release/
