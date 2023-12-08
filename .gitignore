@@ -42,3 +42,4 @@ build/
 # Allow untracked workspace
 workspace/
 
+compile_commands.json

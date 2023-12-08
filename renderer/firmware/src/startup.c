@@ -91,20 +91,6 @@ void *memcpy(void *dest, void *src, uint32_t size) {
   return dest;
 }
 
-void init(void) {
-  // set bss to zero
-  memset(_bss, 0, _ebss - _bss);
-  // zero controls
-  // might not be neccessary
-  memcpy((void *)BG_CONTROLS, 0, 64);
-  // copy data rom to data ram
-  memcpy(_data, _data_source, _edata - _data);
-
-  INTERRUPT_ENABLE = 0b10;
-  MTIMECMP_LOW = 1;
-  MTIMECMP_HIGH = 0;
-}
-
 void printf(const char *fmt, ...) {
   if (MODE_CONTROL & 0b1) {
     return;
@@ -151,6 +137,21 @@ void printf(const char *fmt, ...) {
   memcpy(TEXT_DATA + LINE_LEN, TEXT_DATA, LINE_LEN * 31);
   memcpy(TEXT_DATA, line, LINE_LEN);
   va_end(args);
+}
+
+void init(void) {
+  printf("%d, %d, %d", _data, _data_source, _edata);
+  // set bss to zero
+  memset(_bss, 0, _ebss - _bss);
+  // zero controls
+  // might not be neccessary
+  memcpy((void *)BG_CONTROLS, 0, 64);
+  // copy data rom to data ram
+  memcpy(_data, _data_source, _edata - _data);
+
+  INTERRUPT_ENABLE = 0b10;
+  MTIMECMP_LOW = 1;
+  MTIMECMP_HIGH = 0;
 }
 
 void c_interrupt_handler(uint32_t mcause) {}
