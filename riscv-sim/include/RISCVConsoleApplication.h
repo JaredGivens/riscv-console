@@ -5,9 +5,12 @@
 #include "GUIScrollableLabelBox.h"
 #include "GUIScrollableMemoryLabelBox.h"
 #include "GUIScrollableTextViewLineBox.h"
+#include "GUITreeNodeView.h"
+#include "VariableTreeViewDecorator.h"
 #include "GraphicFactory.h"
 #include "RISCVConsole.h"
 #include "RISCVConsoleApplicationConfig.h"
+#include "VariableTranslator.h"
 #include "AutoRecorder.h"
 #include <unordered_map>
 #include <set>
@@ -48,7 +51,8 @@ class CRISCVConsoleApplication : public std::enable_shared_from_this<CRISCVConso
         std::shared_ptr<CGUIButton> DResetButton;
         std::shared_ptr<CGUIButton> DFirmwareButton;
         std::shared_ptr<CGUIToggleButton> DCartridgeButton;
-        std::shared_ptr<CGUIBox> DDebugBox;
+        std::shared_ptr<CGUIBox> DLowLevelDebugBox;
+        std::shared_ptr<CGUIBox> DHighLevelDebugBox;
         std::shared_ptr<CGUIGrid> DRegisterGrid;
         std::vector< std::shared_ptr< CGUILabel > > DGeneralRegisterNameLabels;
         std::vector< std::shared_ptr< CGUILabel > > DGeneralRegisterValueLabels;
@@ -75,6 +79,11 @@ class CRISCVConsoleApplication : public std::enable_shared_from_this<CRISCVConso
         std::shared_ptr<CGUIButton> DDebugMemoryVideoButton;
         std::shared_ptr<CGUIButton> DDebugMemoryDataButton;
         std::shared_ptr<CGUIToggleButton> DDebugMemoryStackButton;
+        std::shared_ptr<CGUIMenu> DDebugVariablePopupMenu;
+        std::shared_ptr<CGUIMenuItem> DDebugVariableDetachPopupMenuItem;
+        std::shared_ptr<CGUIWindow> DDebugVariableWindow;
+        std::shared_ptr<CGUITreeNodeView> DDebugVariableTreeView;
+        std::shared_ptr<CVariableTreeViewDecorator> DDebugVariableTreeViewDecorator;
         std::unordered_map<std::shared_ptr<CGUIButton>, uint32_t> DDebugMemoryButtonMapping;
         std::unordered_map<uint32_t, std::vector<uint32_t> > DDebugMemorySubSectionMapping;
         std::unordered_map<uint32_t, uint32_t > DDebugMemorySubSectionIndex;
@@ -91,6 +100,7 @@ class CRISCVConsoleApplication : public std::enable_shared_from_this<CRISCVConso
 
         std::shared_ptr<CAutoRecorder> DInputRecorder;
         std::shared_ptr<CRISCVConsole> DRISCVConsole;
+        std::shared_ptr<CVariableTranslator> DVariableTranslator;
 
         std::string DFirmwareFileOpenFolder;
         std::string DCartridgeFileOpenFolder;
@@ -123,6 +133,8 @@ class CRISCVConsoleApplication : public std::enable_shared_from_this<CRISCVConso
         static bool InstructionComboBoxChangedEventCallback(std::shared_ptr<CGUIWidget> widget, TGUICalldata data);
         static bool InstructionBoxButtonEventCallback(std::shared_ptr<CGUIScrollableLineBox> widget, SGUIButtonEvent &event, size_t line, TGUICalldata data);
         static bool InstructionBoxScrollEventCallback(std::shared_ptr<CGUIScrollableLineBox> widget, TGUICalldata data);
+        static bool DebugVariableClickEventCallback(std::shared_ptr<CGUITreeNodeView> widget, SGUIButtonEvent &event, TGUICalldata data);
+        static bool DebugVariableDetachClickEventCallback(std::shared_ptr<CGUIWidget> widget, SGUIButtonEvent &event, TGUICalldata data);
         static void BreakpointEventCallback(CRISCVConsoleBreakpointCalldata data);
 
         void Activate();
@@ -152,6 +164,8 @@ class CRISCVConsoleApplication : public std::enable_shared_from_this<CRISCVConso
         bool InstructionComboBoxChangedEvent(std::shared_ptr<CGUIWidget> widget);
         bool InstructionBoxButtonEvent(std::shared_ptr<CGUIScrollableLineBox> widget, SGUIButtonEvent &event, size_t line);
         bool InstructionBoxScrollEvent(std::shared_ptr<CGUIScrollableLineBox> widget);
+        bool DebugVariableClickEvent(std::shared_ptr<CGUITreeNodeView> widget, SGUIButtonEvent &event);
+        bool DebugVariableDetachClickEvent(std::shared_ptr<CGUIWidget> widget, SGUIButtonEvent &event);
         void BreakpointEvent();
 
         void CreateConsoleWidgets();
@@ -177,6 +191,7 @@ class CRISCVConsoleApplication : public std::enable_shared_from_this<CRISCVConso
         uint32_t GetTimerUS();
         uint32_t GetCPUFrequency();
         uint32_t GetVideoControllerModel();
+        uint32_t GetMaxPointerDepth();
 
         std::string CreateRegisterTooltip(size_t index);
         std::string FindLabelFromAddress(uint32_t addr);

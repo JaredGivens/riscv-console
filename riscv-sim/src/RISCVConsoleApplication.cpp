@@ -1,4 +1,5 @@
 #include "RISCVConsoleApplication.h"
+#include "GUITextViewTreeNodeView.h"
 #include "VideoControllerAllocator.h"
 #include "FileDataSink.h"
 #include "FileDataSource.h"
@@ -26,9 +27,10 @@ CRISCVConsoleApplication::CRISCVConsoleApplication(const std::string &appname, s
     
     auto VideoController = CVideoControllerAllocator::Allocate(GetVideoControllerModel(), DGraphicFactory);
     DRISCVConsole = std::make_shared<CRISCVConsole>(GetTimerUS(),GetScreenTimeoutMS(),GetCPUFrequency(),VideoController);
-    DInputRecorder = std::make_shared<CAutoRecorder>(GetTimerUS(),GetScreenTimeoutMS(),GetCPUFrequency());
+    DInputRecorder = std::make_shared<CAutoRecorder>(GetTimerUS(),GetScreenTimeoutMS(),GetCPUFrequency(),GetVideoControllerModel());
     DApplication->SetActivateCallback(this, ActivateCallback);
-    
+    DVariableTranslator = std::make_shared<CVariableTranslator>(DRISCVConsole->CPU(), DRISCVConsole->Memory());
+    DVariableTranslator->MaxPointerDepth(GetMaxPointerDepth());
 }
 
 CRISCVConsoleApplication::~CRISCVConsoleApplication(){
@@ -159,6 +161,16 @@ bool CRISCVConsoleApplication::InstructionBoxScrollEventCallback(std::shared_ptr
     return App->InstructionBoxScrollEvent(widget);
 }
 
+bool CRISCVConsoleApplication::DebugVariableClickEventCallback(std::shared_ptr<CGUITreeNodeView> widget, SGUIButtonEvent &event, TGUICalldata data){
+    CRISCVConsoleApplication *App = static_cast<CRISCVConsoleApplication *>(data);
+    return App->DebugVariableClickEvent(widget, event);
+}
+
+bool CRISCVConsoleApplication::DebugVariableDetachClickEventCallback(std::shared_ptr<CGUIWidget> widget, SGUIButtonEvent &event, TGUICalldata data){
+    CRISCVConsoleApplication *App = static_cast<CRISCVConsoleApplication *>(data);
+    return App->DebugVariableDetachClickEvent(widget,event);
+}
+
 void CRISCVConsoleApplication::BreakpointEventCallback(CRISCVConsoleBreakpointCalldata data){
     CRISCVConsoleApplication *App = static_cast<CRISCVConsoleApplication *>(data);
     App->BreakpointEvent();
@@ -193,6 +205,7 @@ bool CRISCVConsoleApplication::Timeout(){
     if(DRISCVConsole->VideoTimerTick(DDoubleBufferSurface)){
         DConsoleVideo->Invalidate();
     }
+
     return true;
 }
 
@@ -203,6 +216,7 @@ bool CRISCVConsoleApplication::MainWindowDeleteEvent(std::shared_ptr<CGUIWidget>
 
 void CRISCVConsoleApplication::MainWindowDestroy(std::shared_ptr<CGUIWidget> widget){
     DMainWindow = nullptr;
+    DDebugVariableWindow = nullptr;
 }
 
 bool CRISCVConsoleApplication::MainWindowKeyPressEvent(std::shared_ptr<CGUIWidget> widget, SGUIKeyEvent &event){
@@ -531,7 +545,6 @@ bool CRISCVConsoleApplication::ClearButtonClickEvent(std::shared_ptr<CGUIWidget>
 }
 
 bool CRISCVConsoleApplication::RecordButtonToggledEvent(std::shared_ptr<CGUIWidget> widget){
-
     if(!DDebugRecordButton->GetActive()){
         std::string Filename;
         auto FileChooser = DGUIFactory->NewFileChooserDialog("Save Record",false,DMainWindow);
@@ -588,6 +601,40 @@ bool CRISCVConsoleApplication::InstructionBoxScrollEvent(std::shared_ptr<CGUIScr
     DFollowingInstruction = (widget->GetBaseLine() <= widget->GetHighlightedBufferedLine()) && (widget->GetHighlightedBufferedLine() < widget->GetBaseLine() + widget->GetLineCount());
 
     RefreshDebugInstructionComboBox();
+    return true;
+}
+
+bool CRISCVConsoleApplication::DebugVariableClickEvent(std::shared_ptr<CGUITreeNodeView> widget, SGUIButtonEvent &event){
+    if((event.DType == SGUIButtonEventType::ButtonPress)&&((3 == event.DButton)||((1 == event.DButton)&&(event.DModifier.ModifierIsSet(SGUIModifierType::EType::Control))))){
+        DDebugVariablePopupMenu->PopupAtPointer();
+    }
+    
+    return true;
+}
+
+bool CRISCVConsoleApplication::CRISCVConsoleApplication::DebugVariableDetachClickEvent(std::shared_ptr<CGUIWidget> widget, SGUIButtonEvent &event){
+    if(DDebugVariableDetachPopupMenuItem->GetLabel()->GetText() == "Detach"){
+        auto TreeViewAlloctedWidth = DDebugVariableTreeView->ContainingWidget()->AllocatedWidth();
+        DConsoleDebugBox->Remove(DHighLevelDebugBox);
+        auto MainWindowWidth = DMainWindow->AllocatedWidth();
+        auto MainWindowHeight = DMainWindow->AllocatedHeight();
+        DMainWindow->Resize(MainWindowWidth - TreeViewAlloctedWidth, MainWindowHeight);
+        DDebugVariableWindow->Add(DHighLevelDebugBox);
+        DDebugVariableWindow->ShowAll();
+        int X, Y;
+        DMainWindow->GetPosition(X,Y);
+        DDebugVariableWindow->Move(X+MainWindowWidth - TreeViewAlloctedWidth,Y);
+        DDebugVariablePopupMenu->Hide();
+        DDebugVariableDetachPopupMenuItem->GetLabel()->SetText("Reattach");
+    }
+    else{
+        DDebugVariableWindow->Remove(DHighLevelDebugBox);
+        DDebugVariableWindow->Hide();
+        DConsoleDebugBox->PackStart(DHighLevelDebugBox,true,true,GetWidgetSpacing());
+        DDebugVariableDetachPopupMenuItem->GetLabel()->SetText("Detach");
+    }
+
+    
     return true;
 }
 
@@ -731,14 +778,15 @@ void CRISCVConsoleApplication::CreateSystemControlWidgets(){
 
 void CRISCVConsoleApplication::CreateDebugWidgets(){
     DConsoleDebugBox = DGUIFactory->NewBox(CGUIBox::EOrientation::Horizontal,GetWidgetSpacing());
-    DDebugBox = DGUIFactory->NewBox(CGUIBox::EOrientation::Vertical,GetWidgetSpacing());
+    DLowLevelDebugBox = DGUIFactory->NewBox(CGUIBox::EOrientation::Vertical,GetWidgetSpacing());
+    DHighLevelDebugBox = DGUIFactory->NewBox(CGUIBox::EOrientation::Vertical,GetWidgetSpacing());
     CreateDebugRegisterWidgets();
     auto RegisterBox = DGUIFactory->NewBox(CGUIBox::EOrientation::Horizontal,0);
     RegisterBox->PackStart(DRegisterGrid,false,false,GetWidgetSpacing());
-    DDebugBox->PackStart(RegisterBox,false,false,GetWidgetSpacing());
+    DLowLevelDebugBox->PackStart(RegisterBox,false,false,GetWidgetSpacing());
 
     CreateDebugControlWidgets();
-    //DDebugBox->PackStart(DDebugControlBox,false,false,GetWidgetSpacing());
+    //DLowLevelDebugBox->PackStart(DDebugControlBox,false,false,GetWidgetSpacing());
 
     CreateDebugInstructionWidgets();
     CreateDebugCSRWidgets();
@@ -749,7 +797,8 @@ void CRISCVConsoleApplication::CreateDebugWidgets(){
     CSRLabel->SetJustification(SGUIJustificationType::Left);
     InstCSRGrid->Attach(InstLabel,0,0,1,1);
     InstCSRGrid->Attach(DDebugInstructionComboBox,1,0,1,1);
-    DDebugInstructions->SetHorizontalExpand(true);
+    //DDebugInstructions->SetHorizontalExpand(true);
+    DDebugInstructions->SetHorizontalExpand(false);
     DDebugInstructions->SetVerticalExpand(true);
     InstCSRGrid->Attach(DDebugInstructions->ContainingWidget(),0,1,2,1);
     
@@ -758,7 +807,7 @@ void CRISCVConsoleApplication::CreateDebugWidgets(){
     InstCSRGrid->Attach(DDebugCSRegisters->ContainingWidget(),3,1,1,1);
     InstCSRGrid->SetColumnSpacing(GetWidgetSpacing());
     InstCSRGrid->SetRowSpacing(GetWidgetSpacing());
-    DDebugBox->PackStart(InstCSRGrid,true,true,GetWidgetSpacing());
+    DLowLevelDebugBox->PackStart(InstCSRGrid,true,true,GetWidgetSpacing());
     CreateDebugMemoryWidgets();
     auto MemoryGrid = DGUIFactory->NewGrid();
     auto MemoryLabel = DGUIFactory->NewLabel("Memory");
@@ -777,11 +826,12 @@ void CRISCVConsoleApplication::CreateDebugWidgets(){
     MemoryGrid->Attach(DDebugMemoryDataButton,5,0,1,1);
     MemoryGrid->Attach(DDebugMemoryStackButton,6,0,1,1);
     MemoryGrid->Attach(DDebugMemory->ContainingWidget(),0,1,8,1);
-    DDebugMemory->SetHorizontalExpand(true);
+    //DDebugMemory->SetHorizontalExpand(true);
+    DDebugMemory->SetHorizontalExpand(false);
     DDebugMemory->SetVerticalExpand(false);
     MemoryGrid->SetRowSpacing(GetWidgetSpacing());
     MemoryGrid->SetColumnSpacing(GetWidgetSpacing());
-    DDebugBox->PackStart(MemoryGrid,false,false,GetWidgetSpacing());
+    DLowLevelDebugBox->PackStart(MemoryGrid,false,false,GetWidgetSpacing());
 
     DDebugMemoryFirmwareButton->SetLabel("FW");
     DDebugMemoryFirmwareButton->SetButtonPressEventCallback(this,DebugMemoryButtonClickEventCallback);
@@ -809,8 +859,25 @@ void CRISCVConsoleApplication::CreateDebugWidgets(){
     DDebugMemoryStackButton->SetTooltipText("Stack Pointer");
     DLastMemoryBaseAddress = 0;
 
+    auto VarLabel = DGUIFactory->NewLabel("Variables");
+    VarLabel->SetJustification(SGUIJustificationType::Left);
+    DDebugVariableTreeView = std::make_shared< CGUITextViewTreeNodeView >(DGUIFactory,32,64);
+    DDebugVariableTreeViewDecorator = std::make_shared< CVariableTreeViewDecorator >(DDebugVariableTreeView);
+    DHighLevelDebugBox->PackStart(VarLabel,false,false,GetWidgetSpacing());
+    DHighLevelDebugBox->PackStart(DDebugVariableTreeView->ContainingWidget(),true,true,GetWidgetSpacing());
+    DDebugVariableTreeView->SetButtonPressEventCallback(this,DebugVariableClickEventCallback);
+    DDebugVariablePopupMenu = DGUIFactory->NewMenu();
+    DDebugVariableDetachPopupMenuItem = DGUIFactory->NewMenuItem("Detach");
+    DDebugVariableDetachPopupMenuItem->SetButtonPressEventCallback(this, DebugVariableDetachClickEventCallback);
+    DDebugVariablePopupMenu->Append(DDebugVariableDetachPopupMenuItem);
+    DDebugVariableDetachPopupMenuItem->Show();
+    DDebugVariableWindow = DApplication->NewWindow();
+    DDebugVariableWindow->SetBorderWidth(GetWidgetSpacing());
+
     DConsoleDebugBox->PackStart(DConsoleBox,false,false,GetWidgetSpacing());
-    DConsoleDebugBox->PackStart(DDebugBox,true,true,GetWidgetSpacing());
+    DConsoleDebugBox->PackStart(DLowLevelDebugBox,false,false,GetWidgetSpacing());
+    DConsoleDebugBox->PackStart(DHighLevelDebugBox,true,true,GetWidgetSpacing());
+    
     RefreshDebugRegisters();
 }
 
@@ -902,11 +969,11 @@ void CRISCVConsoleApplication::CreateDebugInstructionWidgets(){
     DDebugInstructions->SetLineCount(GetInstructionLineCount());
     DDebugInstructions->SetButtonPressEventCallback(this,InstructionBoxButtonEventCallback);
     DDebugInstructions->SetScrollEventCallback(this,InstructionBoxScrollEventCallback);
+    DDebugInstructions->SetCursor(nullptr);
 
     DDebugInstructionComboBox = DGUIFactory->NewComboBox();
     DDebugInstructionComboBox->SetFontFamily("monospace");
     DDebugInstructionComboBox->SetChangedEventCallback(this,InstructionComboBoxChangedEventCallback);
-
 }
 
 void CRISCVConsoleApplication::CreateDebugCSRWidgets(){
@@ -926,6 +993,7 @@ void CRISCVConsoleApplication::CreateDebugCSRWidgets(){
     }
     DDebugCSRegisters->SetBufferedLines(InitialCSR);
     DDebugCSRegisters->SetLineCount(GetInstructionLineCount());
+    DDebugCSRegisters->SetCursor(nullptr);
 }
 
 void CRISCVConsoleApplication::CreateDebugMemoryWidgets(){
@@ -1080,6 +1148,14 @@ uint32_t CRISCVConsoleApplication::GetVideoControllerModel(){
     return VideoControllerModel;
 }
 
+uint32_t CRISCVConsoleApplication::GetMaxPointerDepth(){
+    auto PointerDepth = DConfiguration.GetIntegerParameter(CRISCVConsoleApplicationConfiguration::EParameter::PointerDepth);
+    if(16 < PointerDepth){
+        PointerDepth = 16;
+    }
+    return PointerDepth;
+}
+
 std::string CRISCVConsoleApplication::CreateRegisterTooltip(size_t index){
     if((4 <= index)&&(index < CRISCVCPU::RegisterCount())){
         auto RegisterValue = DRISCVConsole->CPU()->Register(index);
@@ -1156,6 +1232,11 @@ void CRISCVConsoleApplication::RefreshDebugRegisters(){
             DDebugInstructions->SetBaseLine(LineIndex < DDebugInstructions->GetLineCount()/2 ? 0 : LineIndex - (DDebugInstructions->GetLineCount()/2 - 1));
         }
     }
+    std::vector< std::shared_ptr< CDwarfStructures::SProgrammaticScope > > Scopes;
+    std::vector< std::shared_ptr<CVariableTranslator::CProgramState> > States;
+    DRISCVConsole->GetActiveScopes(Scopes);
+    DVariableTranslator->TranslateVariables(States, Scopes);
+    DDebugVariableTreeViewDecorator->DecorateTreeView(States);
 }
 
 void CRISCVConsoleApplication::RefreshDebugInstructionComboBox(){
