@@ -22,7 +22,6 @@
 #define LINE_LEN 64
 
 volatile int ticks;
-volatile uint32_t controller_status;
 
 uint8_t *BG_DATAS = (void *)0x50000000;
 uint32_t BG_DATA_SIZE = 0x24000;
@@ -39,7 +38,7 @@ extern uint8_t _bss[];
 extern uint8_t _ebss[];
 
 void (*timer_callback)(void);
-uint32_t timer_period;
+uint32_t timer_period = 100;
 uint64_t timer_last; // time when callback was last called
 
 void (*video_callback)(void *);
@@ -140,7 +139,6 @@ void printf(const char *fmt, ...) {
 }
 
 void init(void) {
-  printf("%d, %d, %d", _data, _data_source, _edata);
   // set bss to zero
   memset(_bss, 0, _ebss - _bss);
   // zero controls
@@ -149,12 +147,60 @@ void init(void) {
   // copy data rom to data ram
   memcpy(_data, _data_source, _edata - _data);
 
+  csr_write_mie(0x808);    // Enable all timer interrupts
+  csr_enable_interrupts(); // Global interrupt enable
   INTERRUPT_ENABLE = 0b10;
   MTIMECMP_LOW = 1;
   MTIMECMP_HIGH = 0;
 }
 
-void c_interrupt_handler(uint32_t mcause) {}
+bool running_cartridge = false;
+char *error_msg[256] = {"instruction address misaligned\n",
+                        "instruction access fault\n", "illegal instruction\n",
+                        "load address misalighned\n"
+                        "load access fault\n"
+                        "store address misaligned\n"
+                        "store access fault\n"};
+void c_interrupt_handler(uint32_t mcause) {
+  if (mcause < 8) {
+    MODE_CONTROL = 0;
+    printf(error_msg[mcause]);
+    return;
+  }
+  switch (mcause) {
+  case 0x80000007: // machine timer interrupt
+  {
+    uint64_t next_time_cmp = (((uint64_t)MTIMECMP_HIGH) << 32) | MTIMECMP_LOW;
+    next_time_cmp += 100;
+    MTIMECMP_HIGH = next_time_cmp >> 32;
+    MTIMECMP_LOW = next_time_cmp;
+    // printf("Timer %d", next_time_cmp);
+
+    if (timer_callback != NULL && (next_time_cmp - timer_last) > timer_period) {
+      timer_last = next_time_cmp;
+      timer_callback();
+    }
+    break;
+  }
+  case 0x8000000b: // external(chipset) interrupt
+  {
+    uint32_t pending = INTERRUPT_PENDING;
+    if (pending & 0b1) {
+    }
+    if (pending & 0b10) { // video interrupt
+      if (video_callback != NULL) {
+        video_callback(video_arg);
+      }
+      // MODE_CONTROL = 0;
+      printf("video");
+    }
+    if (pending & 0b100) { // command interrupt
+    }
+    INTERRUPT_PENDING = pending; // clear interrupts that have been handled.
+    break;
+  }
+  }
+}
 
 typedef enum {
   SYSCALL_GET_MTIME,
@@ -165,6 +211,8 @@ typedef enum {
   SYSCALL_GET_PIXEL_BG_DATA,
   SYSCALL_SET_PIXEL_BG_CONTROLS,
   SYSCALL_GET_BG_PALETTE,
+  SYSCALL_SET_VIDEO_CALLBACK,
+  SYSCALL_SET_TIMER_CALLBACK,
 } syscall;
 
 uint32_t c_system_call(uint32_t arg0, uint32_t arg1, uint32_t arg2,
@@ -189,6 +237,15 @@ uint32_t c_system_call(uint32_t arg0, uint32_t arg1, uint32_t arg2,
     return 0;
   case SYSCALL_GET_BG_PALETTE:
     return (uint32_t)(BG_PALETTES + (BG_PALETTE_SIZE * arg0));
+  case SYSCALL_SET_VIDEO_CALLBACK:
+    video_callback = (void (*)(void *))arg0;
+    video_arg = (void *)arg1;
+    return 0;
+  case SYSCALL_SET_TIMER_CALLBACK:
+    timer_callback = (void (*)())arg0;
+    timer_period = arg1;
+    timer_last = (((uint64_t)MTIMECMP_HIGH) << 32) | MTIMECMP_LOW;
+    return 0;
   }
   return 1;
 }

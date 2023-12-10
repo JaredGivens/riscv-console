@@ -11,7 +11,7 @@ OUTPUT_ARCH(riscv)
 MEMORY
 {
     /* riscv-console virt machine FLASH */
-    FLASH (rx)  : ORIGIN = 0x00000000, LENGTH = 2M
+    FLASH (rx)  : ORIGIN = 0x00000000, LENGTH = 16M
     /* riscv-console virt machine RAM */
     RAM (rwx)   : ORIGIN = 0x70000000, LENGTH = 2M
     
