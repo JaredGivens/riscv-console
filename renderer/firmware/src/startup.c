@@ -44,7 +44,7 @@ uint32_t LG_SP_DATA_SIZE = 0x1000;
 uint32_t MD_SP_DATA_SIZE = 0x400;
 uint32_t SM_SP_DATA_SIZE = 0x100;
 uint32_t BG_PALETTE_SIZE = 0x400;
-uint32_t SP_PALETTE_SIZE = 0x1000;
+uint32_t SP_PALETTE_SIZE = 0x400;
 char *TEXT_DATA = (char *)0x500F4800;
 
 extern uint8_t _data[];
