@@ -7,7 +7,7 @@
 
 # =============================================================================
 # Project: ecs251
-# Configurations: 
+# Configurations: Debug
 # =============================================================================
 # =============================================================================
 
@@ -22,7 +22,7 @@ rule CUSTOM_COMMAND
 #############################################
 # Rule for compiling ASM files.
 
-rule ASM_COMPILER__firmware_
+rule ASM_COMPILER__firmware_Debug
   depfile = $DEP_FILE
   deps = gcc
   command = riscv32-unknown-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -32,7 +32,7 @@ rule ASM_COMPILER__firmware_
 #############################################
 # Rule for compiling C files.
 
-rule C_COMPILER__firmware_
+rule C_COMPILER__firmware_Debug
   depfile = $DEP_FILE
   deps = gcc
   command = riscv32-unknown-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -42,7 +42,7 @@ rule C_COMPILER__firmware_
 #############################################
 # Rule for linking C executable.
 
-rule C_EXECUTABLE_LINKER__firmware_
+rule C_EXECUTABLE_LINKER__firmware_Debug
   command = $PRE_LINK && riscv32-unknown-elf-gcc $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking C executable $TARGET_FILE
   restat = $RESTAT
@@ -51,7 +51,7 @@ rule C_EXECUTABLE_LINKER__firmware_
 #############################################
 # Rule for compiling ASM files.
 
-rule ASM_COMPILER__renderer_
+rule ASM_COMPILER__renderer_Debug
   depfile = $DEP_FILE
   deps = gcc
   command = riscv32-unknown-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -61,7 +61,7 @@ rule ASM_COMPILER__renderer_
 #############################################
 # Rule for compiling C files.
 
-rule C_COMPILER__renderer_
+rule C_COMPILER__renderer_Debug
   depfile = $DEP_FILE
   deps = gcc
   command = riscv32-unknown-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -71,7 +71,7 @@ rule C_COMPILER__renderer_
 #############################################
 # Rule for linking C executable.
 
-rule C_EXECUTABLE_LINKER__renderer_
+rule C_EXECUTABLE_LINKER__renderer_Debug
   command = $PRE_LINK && riscv32-unknown-elf-gcc $FLAGS $LINK_FLAGS $in -o $TARGET_FILE $LINK_PATH $LINK_LIBRARIES && $POST_BUILD
   description = Linking C executable $TARGET_FILE
   restat = $RESTAT
@@ -80,7 +80,7 @@ rule C_EXECUTABLE_LINKER__renderer_
 #############################################
 # Rule for compiling C files.
 
-rule C_COMPILER__Mango_
+rule C_COMPILER__Mango_Debug
   depfile = $DEP_FILE
   deps = gcc
   command = riscv32-unknown-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
@@ -90,7 +90,7 @@ rule C_COMPILER__Mango_
 #############################################
 # Rule for linking C static library.
 
-rule C_STATIC_LIBRARY_LINKER__Mango_
+rule C_STATIC_LIBRARY_LINKER__Mango_Debug
   command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && /usr/bin/ar qc $TARGET_FILE $LINK_FLAGS $in && /usr/bin/ranlib $TARGET_FILE && $POST_BUILD
   description = Linking C static library $TARGET_FILE
   restat = $RESTAT

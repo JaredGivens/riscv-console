@@ -12,7 +12,7 @@
 
 # =============================================================================
 # Project: ecs251
-# Configurations: 
+# Configurations: Debug
 # =============================================================================
 
 #############################################
@@ -20,6 +20,11 @@
 
 ninja_required_version = 1.5
 
+
+#############################################
+# Set configuration variable for custom commands.
+
+CONFIGURATION = Debug
 # =============================================================================
 # Include auxiliary files.
 
@@ -72,31 +77,33 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 
 build cmake_object_order_depends_target_firmware: phony || firmware/CMakeFiles/firmware.dir
 
-build firmware/CMakeFiles/firmware.dir/src/main.c.o: C_COMPILER__firmware_ /home/jared/Documents/projects/riscv-console/renderer/firmware/src/main.c || cmake_object_order_depends_target_firmware
+build firmware/CMakeFiles/firmware.dir/src/main.c.o: C_COMPILER__firmware_Debug /home/jared/Documents/projects/riscv-console/renderer/firmware/src/main.c || cmake_object_order_depends_target_firmware
   DEP_FILE = firmware/CMakeFiles/firmware.dir/src/main.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   OBJECT_DIR = firmware/CMakeFiles/firmware.dir
   OBJECT_FILE_DIR = firmware/CMakeFiles/firmware.dir/src
   TARGET_COMPILE_PDB = firmware/CMakeFiles/firmware.dir/
   TARGET_PDB = firmware/firmware.pdb
 
-build firmware/CMakeFiles/firmware.dir/src/crt0.s.o: ASM_COMPILER__firmware_ /home/jared/Documents/projects/riscv-console/renderer/firmware/src/crt0.s || cmake_object_order_depends_target_firmware
+build firmware/CMakeFiles/firmware.dir/src/crt0.s.o: ASM_COMPILER__firmware_Debug /home/jared/Documents/projects/riscv-console/renderer/firmware/src/crt0.s || cmake_object_order_depends_target_firmware
   DEP_FILE = firmware/CMakeFiles/firmware.dir/src/crt0.s.o.d
+  FLAGS = -g
   OBJECT_DIR = firmware/CMakeFiles/firmware.dir
   OBJECT_FILE_DIR = firmware/CMakeFiles/firmware.dir/src
   TARGET_COMPILE_PDB = firmware/CMakeFiles/firmware.dir/
   TARGET_PDB = firmware/firmware.pdb
 
-build firmware/CMakeFiles/firmware.dir/src/interrupt.s.o: ASM_COMPILER__firmware_ /home/jared/Documents/projects/riscv-console/renderer/firmware/src/interrupt.s || cmake_object_order_depends_target_firmware
+build firmware/CMakeFiles/firmware.dir/src/interrupt.s.o: ASM_COMPILER__firmware_Debug /home/jared/Documents/projects/riscv-console/renderer/firmware/src/interrupt.s || cmake_object_order_depends_target_firmware
   DEP_FILE = firmware/CMakeFiles/firmware.dir/src/interrupt.s.o.d
+  FLAGS = -g
   OBJECT_DIR = firmware/CMakeFiles/firmware.dir
   OBJECT_FILE_DIR = firmware/CMakeFiles/firmware.dir/src
   TARGET_COMPILE_PDB = firmware/CMakeFiles/firmware.dir/
   TARGET_PDB = firmware/firmware.pdb
 
-build firmware/CMakeFiles/firmware.dir/src/startup.c.o: C_COMPILER__firmware_ /home/jared/Documents/projects/riscv-console/renderer/firmware/src/startup.c || cmake_object_order_depends_target_firmware
+build firmware/CMakeFiles/firmware.dir/src/startup.c.o: C_COMPILER__firmware_Debug /home/jared/Documents/projects/riscv-console/renderer/firmware/src/startup.c || cmake_object_order_depends_target_firmware
   DEP_FILE = firmware/CMakeFiles/firmware.dir/src/startup.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   OBJECT_DIR = firmware/CMakeFiles/firmware.dir
   OBJECT_FILE_DIR = firmware/CMakeFiles/firmware.dir/src
   TARGET_COMPILE_PDB = firmware/CMakeFiles/firmware.dir/
@@ -110,9 +117,9 @@ build firmware/CMakeFiles/firmware.dir/src/startup.c.o: C_COMPILER__firmware_ /h
 #############################################
 # Link the executable firmware/firmware
 
-build firmware/firmware: C_EXECUTABLE_LINKER__firmware_ firmware/CMakeFiles/firmware.dir/src/main.c.o firmware/CMakeFiles/firmware.dir/src/crt0.s.o firmware/CMakeFiles/firmware.dir/src/interrupt.s.o firmware/CMakeFiles/firmware.dir/src/startup.c.o
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror
-  LINK_FLAGS = -Wl,--gc-sections   -Wl,-T/home/jared/Documents/projects/riscv-console/renderer/firmware/riscv32-console.ld
+build firmware/firmware: C_EXECUTABLE_LINKER__firmware_Debug firmware/CMakeFiles/firmware.dir/src/main.c.o firmware/CMakeFiles/firmware.dir/src/crt0.s.o firmware/CMakeFiles/firmware.dir/src/interrupt.s.o firmware/CMakeFiles/firmware.dir/src/startup.c.o
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g
+  LINK_FLAGS = -Wl,--gc-sections    -Wl,-T/home/jared/Documents/projects/riscv-console/renderer/firmware/riscv32-console.ld
   OBJECT_DIR = firmware/CMakeFiles/firmware.dir
   POST_BUILD = :
   PRE_LINK = :
@@ -157,57 +164,60 @@ build firmware/rebuild_cache: phony firmware/CMakeFiles/rebuild_cache.util
 
 build cmake_object_order_depends_target_renderer: phony || cmake_object_order_depends_target_Mango
 
-build PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/main.c.o: C_COMPILER__renderer_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/game/src/main.c || cmake_object_order_depends_target_renderer
+build PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/main.c.o: C_COMPILER__renderer_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/game/src/main.c || cmake_object_order_depends_target_renderer
   DEFINES = -DMAIN=main -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/main.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/CMakeFiles/renderer.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src
   TARGET_COMPILE_PDB = PureC-Software-Renderer/CMakeFiles/renderer.dir/
   TARGET_PDB = PureC-Software-Renderer/renderer.pdb
 
-build PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/crt0.s.o: ASM_COMPILER__renderer_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/game/src/crt0.s || cmake_object_order_depends_target_renderer
+build PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/crt0.s.o: ASM_COMPILER__renderer_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/game/src/crt0.s || cmake_object_order_depends_target_renderer
   DEFINES = -DMAIN=main -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/crt0.s.o.d
+  FLAGS = -g
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/CMakeFiles/renderer.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src
   TARGET_COMPILE_PDB = PureC-Software-Renderer/CMakeFiles/renderer.dir/
   TARGET_PDB = PureC-Software-Renderer/renderer.pdb
 
-build PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/models/cube.c.o: C_COMPILER__renderer_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/game/src/models/cube.c || cmake_object_order_depends_target_renderer
+build PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/models/cube.c.o: C_COMPILER__renderer_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/game/src/models/cube.c || cmake_object_order_depends_target_renderer
   DEFINES = -DMAIN=main -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/models/cube.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/CMakeFiles/renderer.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/models
   TARGET_COMPILE_PDB = PureC-Software-Renderer/CMakeFiles/renderer.dir/
   TARGET_PDB = PureC-Software-Renderer/renderer.pdb
 
-build PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/models/spider.c.o: C_COMPILER__renderer_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/game/src/models/spider.c || cmake_object_order_depends_target_renderer
+build PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/models/spider.c.o: C_COMPILER__renderer_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/game/src/models/spider.c || cmake_object_order_depends_target_renderer
   DEFINES = -DMAIN=main -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/models/spider.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/CMakeFiles/renderer.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/models
   TARGET_COMPILE_PDB = PureC-Software-Renderer/CMakeFiles/renderer.dir/
   TARGET_PDB = PureC-Software-Renderer/renderer.pdb
 
-build PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/group7/syscalls.s.o: ASM_COMPILER__renderer_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/game/src/group7/syscalls.s || cmake_object_order_depends_target_renderer
+build PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/group7/syscalls.s.o: ASM_COMPILER__renderer_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/game/src/group7/syscalls.s || cmake_object_order_depends_target_renderer
   DEFINES = -DMAIN=main -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/group7/syscalls.s.o.d
+  FLAGS = -g
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/CMakeFiles/renderer.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/group7
   TARGET_COMPILE_PDB = PureC-Software-Renderer/CMakeFiles/renderer.dir/
   TARGET_PDB = PureC-Software-Renderer/renderer.pdb
 
-build PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/group7/threading.s.o: ASM_COMPILER__renderer_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/game/src/group7/threading.s || cmake_object_order_depends_target_renderer
+build PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/group7/threading.s.o: ASM_COMPILER__renderer_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/game/src/group7/threading.s || cmake_object_order_depends_target_renderer
   DEFINES = -DMAIN=main -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/group7/threading.s.o.d
+  FLAGS = -g
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/CMakeFiles/renderer.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/group7
@@ -222,9 +232,9 @@ build PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/group7/threading.
 #############################################
 # Link the executable PureC-Software-Renderer/renderer
 
-build PureC-Software-Renderer/renderer: C_EXECUTABLE_LINKER__renderer_ PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/main.c.o PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/crt0.s.o PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/models/cube.c.o PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/models/spider.c.o PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/group7/syscalls.s.o PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/group7/threading.s.o | PureC-Software-Renderer/Mango/libMango.a || PureC-Software-Renderer/Mango/libMango.a
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror
-  LINK_FLAGS = -Wl,--gc-sections   -Wl,-T/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/game/riscv32-console.ld
+build PureC-Software-Renderer/renderer: C_EXECUTABLE_LINKER__renderer_Debug PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/main.c.o PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/crt0.s.o PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/models/cube.c.o PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/models/spider.c.o PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/group7/syscalls.s.o PureC-Software-Renderer/CMakeFiles/renderer.dir/game/src/group7/threading.s.o | PureC-Software-Renderer/Mango/libMango.a || PureC-Software-Renderer/Mango/libMango.a
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g
+  LINK_FLAGS = -Wl,--gc-sections    -Wl,-T/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/game/riscv32-console.ld
   LINK_LIBRARIES = PureC-Software-Renderer/Mango/libMango.a  -lm
   OBJECT_DIR = PureC-Software-Renderer/CMakeFiles/renderer.dir
   POST_BUILD = :
@@ -270,190 +280,190 @@ build PureC-Software-Renderer/rebuild_cache: phony PureC-Software-Renderer/CMake
 
 build cmake_object_order_depends_target_Mango: phony || PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/animation.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/game/animation.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/animation.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/game/animation.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/animation.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/camera.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/game/camera.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/camera.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/game/camera.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/camera.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/gameobject.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/game/gameobject.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/gameobject.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/game/gameobject.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/gameobject.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/scene.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/game/scene.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/scene.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/game/scene.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/scene.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/mango.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/mango.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/mango.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/mango.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/mango.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/geometry.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/math/geometry.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/geometry.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/math/geometry.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/geometry.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/mat4.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/math/mat4.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/mat4.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/math/mat4.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/mat4.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/plane.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/math/plane.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/plane.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/math/plane.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/plane.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/shader_math.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/math/shader_math.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/shader_math.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/math/shader_math.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/shader_math.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec2.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/math/vec2.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec2.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/math/vec2.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec2.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec3.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/math/vec3.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec3.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/math/vec3.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec3.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec4.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/math/vec4.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec4.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/math/vec4.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec4.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/display_rvc.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/render/display_rvc.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/display_rvc.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/render/display_rvc.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/display_rvc.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/drawing.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/render/drawing.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/drawing.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/render/drawing.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/drawing.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/framedata.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/render/framedata.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/framedata.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/render/framedata.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/framedata.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/shaders/sdf.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/shaders/sdf.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/shaders/sdf.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/shaders/sdf.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/shaders/sdf.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/shaders
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/shaders/shader.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/shaders/shader.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/shaders/shader.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/shaders/shader.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/shaders/shader.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/shaders
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/system/real.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/system/real.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/system/real.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/system/real.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/system/real.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/system
   TARGET_COMPILE_PDB = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/Mango.pdb
   TARGET_PDB = PureC-Software-Renderer/Mango/libMango.pdb
 
-build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/system/system.c.o: C_COMPILER__Mango_ /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/system/system.c || cmake_object_order_depends_target_Mango
+build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/system/system.c.o: C_COMPILER__Mango_Debug /home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src/Mango/system/system.c || cmake_object_order_depends_target_Mango
   DEFINES = -DRVC -DRVC7
   DEP_FILE = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/system/system.c.o.d
-  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -std=gnu11
+  FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g -std=gnu11
   INCLUDES = -I/home/jared/Documents/projects/riscv-console/renderer/PureC-Software-Renderer/Mango/src
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   OBJECT_FILE_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/system
@@ -468,8 +478,8 @@ build PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/system/system
 #############################################
 # Link the static library PureC-Software-Renderer/Mango/libMango.a
 
-build PureC-Software-Renderer/Mango/libMango.a: C_STATIC_LIBRARY_LINKER__Mango_ PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/animation.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/camera.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/gameobject.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/scene.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/mango.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/geometry.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/mat4.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/plane.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/shader_math.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec2.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec3.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec4.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/display_rvc.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/drawing.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/framedata.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/shaders/sdf.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/shaders/shader.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/system/real.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/system/system.c.o
-  LANGUAGE_COMPILE_FLAGS = -ffreestanding -nostartfiles -Wall -Werror
+build PureC-Software-Renderer/Mango/libMango.a: C_STATIC_LIBRARY_LINKER__Mango_Debug PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/animation.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/camera.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/gameobject.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/game/scene.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/mango.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/geometry.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/mat4.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/plane.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/shader_math.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec2.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec3.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/math/vec4.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/display_rvc.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/drawing.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/render/framedata.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/shaders/sdf.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/shaders/shader.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/system/real.c.o PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir/src/Mango/system/system.c.o
+  LANGUAGE_COMPILE_FLAGS = -ffreestanding -nostartfiles -Wall -Werror -g
   OBJECT_DIR = PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
   POST_BUILD = :
   PRE_LINK = :
