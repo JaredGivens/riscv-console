@@ -25,10 +25,23 @@ volatile int ticks;
 volatile uint32_t controller_status;
 
 uint8_t *BG_DATAS = (void *)0x50000000;
-uint32_t BG_DATA_SIZE = 0x24000;
-volatile uint32_t *BG_CONTROLS = (volatile void *)0x500F5A00;
+uint8_t *LG_SP_DATAS = (void *)0x50090000;
+uint8_t *MD_SP_DATAS = (void *)0x500D0000;
+uint8_t *SM_SP_DATAS = (void *)0x500E0000;
+
 uint8_t *BG_PALETTES = (void *)0x500F0000;
+uint8_t *LG_SP_PALETTES = (void *)0x500F1000;
+uint8_t *MD_SP_PALETTES = (void *)0x500F2000;
+uint8_t *SM_SP_PALETTES = (void *)0x500F3000;
+
+volatile uint32_t *BG_CONTROLS = (volatile void *)0x500F5A00;
+volatile uint32_t *LG_SP_CONTROLS = (volatile void *)0x500F5B00;
+volatile uint32_t *MD_SP_CONTROLS = (volatile void *)0x500F5F00;
+volatile uint32_t *SM_SP_CONTROLS = (volatile void *)0x500F6300;
+
+uint32_t BG_DATA_SIZE = 0x24000;
 uint32_t BG_PALETTE_SIZE = 0x400;
+uint32_t SP_PALETTE_SIZE = 0x1000;
 char *TEXT_DATA = (char *)0x500F4800;
 
 extern uint8_t _data[];
@@ -165,6 +178,15 @@ typedef enum {
   SYSCALL_GET_PIXEL_BG_DATA,
   SYSCALL_SET_PIXEL_BG_CONTROLS,
   SYSCALL_GET_BG_PALETTE,
+  SYSCALL_GET_LG_SP_DATA,
+  SYSCALL_GET_MD_SP_DATA,
+  SYSCALL_GET_SM_SP_DATA,
+  SYSCALL_GET_LG_SP_PALETTE,
+  SYSCALL_GET_MD_SP_PALETTE,
+  SYSCALL_GET_SM_SP_PALETTE,
+  SYSCALL_SET_LG_SP_CONTROLS,
+  SYSCALL_SET_MD_SP_CONTROLS,
+  SYSCALL_SET_SM_SP_CONTROLS,
 } syscall;
 
 uint32_t c_system_call(uint32_t arg0, uint32_t arg1, uint32_t arg2,
@@ -189,6 +211,27 @@ uint32_t c_system_call(uint32_t arg0, uint32_t arg1, uint32_t arg2,
     return 0;
   case SYSCALL_GET_BG_PALETTE:
     return (uint32_t)(BG_PALETTES + (BG_PALETTE_SIZE * arg0));
+  case SYSCALL_GET_LG_SP_DATA:
+    return (uint32_t)(LG_SP_DATAS + (BG_DATA_SIZE * arg0));
+  case SYSCALL_GET_MD_SP_DATA:
+    return (uint32_t)(MD_SP_DATAS + (BG_DATA_SIZE * arg0));
+  case SYSCALL_GET_SM_SP_DATA:
+    return (uint32_t)(SM_SP_DATAS + (BG_DATA_SIZE * arg0));
+  case SYSCALL_GET_LG_SP_PALETTE:
+    return (uint32_t)(LG_SP_PALETTES + (SP_PALETTE_SIZE * arg0));
+  case SYSCALL_GET_MD_SP_PALETTE:
+    return (uint32_t)(MD_SP_PALETTES + (SP_PALETTE_SIZE * arg0));
+  case SYSCALL_GET_SM_SP_PALETTE:
+    return (uint32_t)(SM_SP_PALETTES + (SP_PALETTE_SIZE * arg0));
+  case SYSCALL_SET_LG_SP_CONTROLS:
+    LG_SP_CONTROLS[arg0] = arg1;
+    return 0;
+  case SYSCALL_SET_MD_SP_CONTROLS:
+    MD_SP_CONTROLS[arg0] = arg1;
+    return 0;
+  case SYSCALL_SET_SM_SP_CONTROLS:
+    SM_SP_CONTROLS[arg0] = arg1;
+    return 0;
   }
   return 1;
 }
