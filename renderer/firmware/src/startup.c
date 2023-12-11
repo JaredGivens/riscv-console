@@ -153,7 +153,6 @@ void printf(const char *fmt, ...) {
 }
 
 void init(void) {
-  printf("%d, %d, %d", _data, _data_source, _edata);
   // set bss to zero
   memset(_bss, 0, _ebss - _bss);
   // zero controls
