@@ -1,0 +1,11 @@
+/home/jared/Documents/projects/riscv-console/renderer/debug7/CMakeFiles/edit_cache.dir
+/home/jared/Documents/projects/riscv-console/renderer/debug7/CMakeFiles/rebuild_cache.dir
+/home/jared/Documents/projects/riscv-console/renderer/debug7/firmware/CMakeFiles/firmware.dir
+/home/jared/Documents/projects/riscv-console/renderer/debug7/firmware/CMakeFiles/edit_cache.dir
+/home/jared/Documents/projects/riscv-console/renderer/debug7/firmware/CMakeFiles/rebuild_cache.dir
+/home/jared/Documents/projects/riscv-console/renderer/debug7/PureC-Software-Renderer/CMakeFiles/renderer.dir
+/home/jared/Documents/projects/riscv-console/renderer/debug7/PureC-Software-Renderer/CMakeFiles/edit_cache.dir
+/home/jared/Documents/projects/riscv-console/renderer/debug7/PureC-Software-Renderer/CMakeFiles/rebuild_cache.dir
+/home/jared/Documents/projects/riscv-console/renderer/debug7/PureC-Software-Renderer/Mango/CMakeFiles/Mango.dir
+/home/jared/Documents/projects/riscv-console/renderer/debug7/PureC-Software-Renderer/Mango/CMakeFiles/edit_cache.dir
+/home/jared/Documents/projects/riscv-console/renderer/debug7/PureC-Software-Renderer/Mango/CMakeFiles/rebuild_cache.dir

@@ -147,8 +147,8 @@ void init(void) {
   // copy data rom to data ram
   memcpy(_data, _data_source, _edata - _data);
 
-  csr_write_mie(0x808);    // Enable all timer interrupts
-  csr_enable_interrupts(); // Global interrupt enable
+  // csr_write_mie(0x888);    // Enable all timer interrupts
+  // csr_enable_interrupts(); // Global interrupt enable
   INTERRUPT_ENABLE = 0b10;
   MTIMECMP_LOW = 1;
   MTIMECMP_HIGH = 0;
@@ -192,7 +192,6 @@ void c_interrupt_handler(uint32_t mcause) {
         video_callback(video_arg);
       }
       // MODE_CONTROL = 0;
-      printf("video");
     }
     if (pending & 0b100) { // command interrupt
     }
