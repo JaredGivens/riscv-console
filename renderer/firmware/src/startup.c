@@ -40,6 +40,9 @@ volatile uint32_t *MD_SP_CONTROLS = (volatile void *)0x500F5F00;
 volatile uint32_t *SM_SP_CONTROLS = (volatile void *)0x500F6300;
 
 uint32_t BG_DATA_SIZE = 0x24000;
+uint32_t LG_SP_DATA_SIZE = 0x1000;
+uint32_t MD_SP_DATA_SIZE = 0x400;
+uint32_t SM_SP_DATA_SIZE = 0x100;
 uint32_t BG_PALETTE_SIZE = 0x400;
 uint32_t SP_PALETTE_SIZE = 0x1000;
 char *TEXT_DATA = (char *)0x500F4800;
@@ -252,11 +255,11 @@ uint32_t c_system_call(uint32_t arg0, uint32_t arg1, uint32_t arg2,
   case SYSCALL_GET_BG_PALETTE:
     return (uint32_t)(BG_PALETTES + (BG_PALETTE_SIZE * arg0));
   case SYSCALL_GET_LG_SP_DATA:
-    return (uint32_t)(LG_SP_DATAS + (BG_DATA_SIZE * arg0));
+    return (uint32_t)(LG_SP_DATAS + (LG_SP_DATA_SIZE * arg0));
   case SYSCALL_GET_MD_SP_DATA:
-    return (uint32_t)(MD_SP_DATAS + (BG_DATA_SIZE * arg0));
+    return (uint32_t)(MD_SP_DATAS + (MD_SP_DATA_SIZE * arg0));
   case SYSCALL_GET_SM_SP_DATA:
-    return (uint32_t)(SM_SP_DATAS + (BG_DATA_SIZE * arg0));
+    return (uint32_t)(SM_SP_DATAS + (SM_SP_DATA_SIZE * arg0));
   case SYSCALL_GET_LG_SP_PALETTE:
     return (uint32_t)(LG_SP_PALETTES + (SP_PALETTE_SIZE * arg0));
   case SYSCALL_GET_MD_SP_PALETTE:
