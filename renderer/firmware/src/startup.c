@@ -161,12 +161,51 @@ void init(void) {
   // copy data rom to data ram
   memcpy(_data, _data_source, _edata - _data);
 
-  INTERRUPT_ENABLE = 0b10;
+  csr_write_mie(0x888);    // Enable all interrupt soruces
+  csr_enable_interrupts(); // Global interrupt enable
+  INTERRUPT_ENABLE = 0b11110;
   MTIMECMP_LOW = 1;
   MTIMECMP_HIGH = 0;
 }
 
-void c_interrupt_handler(uint32_t mcause) {}
+void c_interrupt_handler(uint32_t mcause) {
+  if (mcause == 0x80000007) // machine timer interrupt
+  {
+    uint64_t next_cmp = (((uint64_t)MTIMECMP_HIGH) << 32) | MTIMECMP_LOW;
+    next_cmp += 100;
+    MTIMECMP_HIGH = next_cmp >> 32;
+    MTIMECMP_LOW = next_cmp;
+    ticks++;
+    controller_status = CONTROLLER;
+    printf("Timer\n");
+
+    if (timer_callback != NULL) {
+      if (timer_callback != NULL && (next_cmp - timer_last) > timer_period) {
+        timer_last = next_cmp;
+        timer_callback();
+      }
+    }
+  }
+
+  if (mcause == 0x8000000b) // external(chipset) interrupt
+  {
+    uint32_t pending = INTERRUPT_PENDING;
+    if (pending & 0b1) { // cartridge interrupt
+    }
+    if (pending & 0b10) { // video interrupt
+      if (video_callback != NULL) {
+        video_callback(video_arg);
+      }
+    }
+    if (pending & 0b100) { // command interrupt
+      if (timer_period < 10000) {
+        timer_period = 10000;
+      } else
+        timer_period = 1000;
+    }
+    INTERRUPT_PENDING = pending; // clear interrupts that have been handled.
+  }
+}
 
 typedef enum {
   SYSCALL_GET_MTIME,
@@ -186,6 +225,8 @@ typedef enum {
   SYSCALL_SET_LG_SP_CONTROLS,
   SYSCALL_SET_MD_SP_CONTROLS,
   SYSCALL_SET_SM_SP_CONTROLS,
+  SYSCALL_SET_VIDEO,
+  SYSCALL_SET_TIMER,
 } syscall;
 
 uint32_t c_system_call(uint32_t arg0, uint32_t arg1, uint32_t arg2,
@@ -230,6 +271,14 @@ uint32_t c_system_call(uint32_t arg0, uint32_t arg1, uint32_t arg2,
     return 0;
   case SYSCALL_SET_SM_SP_CONTROLS:
     SM_SP_CONTROLS[arg0] = arg1;
+    return 0;
+  case SYSCALL_SET_VIDEO:
+    video_callback = (void (*)(void *))arg0;
+    video_arg = (void *)arg1;
+    return 0;
+  case SYSCALL_SET_TIMER:
+    timer_callback = (void (*)())arg0;
+    timer_period = arg1;
     return 0;
   }
   return 1;
